@@ -2,8 +2,4 @@ image:
   file: Dockerfile
 
 tasks:
-  - command:  pip install requests &&
-              pip install beautifulsoup4 &&
-              pip install pandas &&
-              pip install django &&
-              export PATH=$PATH:/workspace/gis_utils/gis_utils_project
+  - command:  export PATH=$PATH:/workspace/gis_utils/gis_utils_project
