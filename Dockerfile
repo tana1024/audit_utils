@@ -4,4 +4,4 @@ WORKDIR /tmptmp/
 COPY requirements.txt .
 
 RUN pip install -r requirements.txt
-#RUN apt-get install -y sqlite3
+RUN apt-get install -y sqlite3
