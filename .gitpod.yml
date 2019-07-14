@@ -1,5 +1,8 @@
 image:
   file: Dockerfile
 
+ports:
+  - port: 8000
+
 tasks:
   - command:  export PATH=$PATH:/workspace/gis_utils/gis_utils_project
