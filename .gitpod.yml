@@ -5,4 +5,4 @@ tasks:
   - command: "pip install beautifulsoup4"
   - command: "pip install pandas"
   - command: "pip install django"
-  
+  - command: "export PATH = $PATH:/workspace/gis_utils/gis_utils_project"
