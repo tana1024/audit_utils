@@ -3,6 +3,7 @@ image:
 
 ports:
   - port: 8000
+  - port: 8080
 
 tasks:
   - command:  export PATH=$PATH:/workspace/gis_utils/gis_utils_project
