@@ -5,5 +5,7 @@ ports:
   - port: 8000
   - port: 8080
 
+domain: "tana1024-app"
+
 tasks:
   - command:  export PATH=$PATH:/workspace/gis_utils/gis_utils_project
