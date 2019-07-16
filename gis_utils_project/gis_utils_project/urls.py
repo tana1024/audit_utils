@@ -15,8 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from django.conf.urls import include as cinclude, url
+from rest_framework import routers
+
+router = routers.DefaultRouter()
 
 urlpatterns = [
-    path('gis_utils_app/', include('gis_utils_app.urls')),
     path('admin/', admin.site.urls),
+    path('gis_utils_app/', include('gis_utils_app.urls')),
+    url('api/', cinclude(router.urls)),
 ]
