@@ -1,6 +1,6 @@
 from django.db import models
 
-# Create your models here.
+
 class Spot(models.Model):
     # 名前
     name = models.CharField(max_length=50)

@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import include, path
 from django.conf.urls import include as cinclude, url
 from rest_framework import routers
+from gis_utils_app import urls
 
 router = routers.DefaultRouter()
 
@@ -24,4 +25,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('gis_utils_app/', include('gis_utils_app.urls')),
     url('api/', cinclude(router.urls)),
+    url('api/', include(urls, namespace='spot')),
 ]
