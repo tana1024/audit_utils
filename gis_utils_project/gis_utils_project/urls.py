@@ -29,7 +29,7 @@ urlpatterns = [
     path('gis_utils_app/', include('gis_utils_app.urls')),
     url('api/', cinclude(router.urls)),
     url('api/', cinclude(urls, namespace='gis_utils_app')),
-    url('', TemplateView.as_view(template_name='gis_utils_frontend/index.html'), name='Home'),
+    url('', TemplateView.as_view(template_name='index.html'), name='Home'),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

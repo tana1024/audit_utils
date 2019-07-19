@@ -2,14 +2,16 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>saicoro</title>
+    <title>gis_utils_frontend</title>
   </head>
   <body>
+<!--    {% load static %} -->
+<!--    <img src="{% static "logo.png" %}"> -->
     {% load render_bundle from webpack_loader %}
     <div id="app">
-      <app></app>
+
     </div>
-<!--    <script src="/dist/build.js"></script> -->
     {% render_bundle 'main' %}
+<!--    <script src="/dist/build.js"></script> -->
   </body>
 </html>
