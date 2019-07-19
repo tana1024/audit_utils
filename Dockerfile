@@ -16,5 +16,5 @@ RUN npm install -g vue-cli
 RUN npm install webpack-bundle-tracker --save-dev
 RUN npm install write-file-webpack-plugin --save-dev
 
-WORKDIR /workspace/git_utils/git_utils_project/git_utils_frontend/
+WORKDIR /workspace/gis_utils/gis_utils_project/gis_utils_frontend/
 RUN npm install
