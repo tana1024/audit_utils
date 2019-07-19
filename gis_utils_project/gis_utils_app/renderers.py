@@ -8,4 +8,4 @@ class SpotJSONRenderer(JSONRenderer):
     def render(self, data, accepted_media_type=None, renderer_context=None):
         return json.dumps({
             'spots': data
-        })
+        }, ensure_ascii=False)

@@ -2,11 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>gis_utils_frontend</title>
+    <title>saicoro</title>
   </head>
   <body>
     {% load render_bundle from webpack_loader %}
-    <div id="app"></div>
+    <div id="app">
+      <app></app>
+    </div>
 <!--    <script src="/dist/build.js"></script> -->
     {% render_bundle 'main' %}
   </body>

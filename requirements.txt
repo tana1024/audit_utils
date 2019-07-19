@@ -3,3 +3,4 @@ beautifulsoup4
 pandas
 django
 django-rest-framework
+django-webpack-loader

@@ -19,11 +19,17 @@ from django.conf.urls import include as cinclude, url
 from rest_framework import routers
 from gis_utils_app import urls
 
+from django.views.generic import TemplateView
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+
 router = routers.DefaultRouter()
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('gis_utils_app/', include('gis_utils_app.urls')),
     url('api/', cinclude(router.urls)),
-    url('api/', include(urls, namespace='spot')),
+    url('api/', cinclude(urls, namespace='gis_utils_app')),
+    url('', TemplateView.as_view(template_name='gis_utils_frontend/index.html'), name='Home'),
 ]
+
+urlpatterns += staticfiles_urlpatterns()
