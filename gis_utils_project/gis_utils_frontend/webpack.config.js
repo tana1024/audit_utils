@@ -20,7 +20,9 @@ module.exports = {
         test: /\.css$/,
         use: [
           'vue-style-loader',
-          'css-loader'
+          'css-loader',
+          'node-sass',
+          'sass-loader'
         ],
       },
       {
@@ -36,7 +38,9 @@ module.exports = {
         use: [
           'vue-style-loader',
           'css-loader',
-          'sass-loader?indentedSyntax'
+          'sass-loader?indentedSyntax',
+          'node-sass',
+          'sass-loader'
         ],
       },
       {
