@@ -16,3 +16,4 @@ RUN npm install -g vue-cli
 RUN npm install webpack-bundle-tracker --save-dev
 RUN npm install write-file-webpack-plugin --save-dev
 RUN npm install --save-dev node-sass sass-loader
+RUN npm install --save vue-router
