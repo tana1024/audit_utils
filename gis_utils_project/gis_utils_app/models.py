@@ -28,8 +28,13 @@ class Spot(models.Model):
 
 class Client(models.Model):
     # 証券コード
-    s_code = models.CharField(primary_key=True,max_length=4)
+    s_code = models.CharField(primary_key=True, max_length=4)
     # クライアント名
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, blank=True)
     # 住所
-    street_address = models.CharField(max_length=100)
+    street_address = models.CharField(max_length=100, blank=True)
+    # 監査法人コード
+    audit_code = models.CharField(max_length=2, blank=True)
+
+    class Meta:
+        ordering = ('s_code',)
