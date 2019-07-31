@@ -13,6 +13,7 @@ CMD echo "install nodejs start"
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
 RUN apt-get install -y nodejs
 RUN npm install -g vue-cli
+RUN npm i bootstrap-vue
 RUN npm install webpack-bundle-tracker --save-dev
 RUN npm install write-file-webpack-plugin --save-dev
 RUN npm install --save-dev node-sass sass-loader

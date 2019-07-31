@@ -1,25 +1,24 @@
 <template>
   <div id="app">
-    <MyHeader></MyHeader>
-    <router-view></router-view>
-    <MyFooter></MyFooter>
+    <img src="./assets/logo.png">
+    <router-view/>
+    <button class="btn btn-primary">test</button>
   </div>
 </template>
 
 <script>
-  import MyHeader from '@/components/Header'
-  import MyFooter from '@/components/Footer'
-
-  export default {
-    components: {
-      MyHeader,
-      MyFooter
-    }
-  }
+export default {
+  name: 'App'
+}
 </script>
 
-<style scoped lang="sass">
-  html, body
-    margin: 0
-    min-height: 100vh
+<style>
+#app {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
 </style>
