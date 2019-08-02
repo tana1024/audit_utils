@@ -15,9 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from django.conf.urls import include as cinclude, url
+from django.conf.urls import include as cinclude, url, static
 from rest_framework import routers
 from gis_utils_app import urls
+from gis_utils_project import settings
 
 from django.views.generic import TemplateView
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
