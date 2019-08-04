@@ -8,7 +8,6 @@ import Information from '@/components/Information'
 import Scraping from '@/components/Scraping'
 import Map from '@/components/Map'
 
-
 Vue.use(Router)
 
 import 'bootstrap/dist/css/bootstrap.css' // added

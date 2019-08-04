@@ -21,3 +21,4 @@ RUN npm install -g http-server
 #RUN npm install write-file-webpack-plugin --save-dev
 #RUN npm install --save-dev node-sass sass-loader
 #RUN npm install --save-dev vue-router
+#RUN npm install --save-dev axios

@@ -16,33 +16,45 @@
                 <th>新日本</th>
                 <td>-</td>
                 <td>-</td>
-                <td><button class="btn btn-sm btn-primary" type="submit">更新</button></td>
+                <td><button class="btn btn-sm btn-primary" @click="exec_scraping('sn')">更新</button></td>
             </tr>
             <tr>
                 <th>あずさ</th>
                 <td>-</td>
                 <td>-</td>
-                <td><button class="btn btn-sm btn-primary" type="submit">更新</button></td>
+                <td><button class="btn btn-sm btn-primary" @click="exec_scraping('az')">更新</button></td>
             </tr>
             <tr>
                 <th>トーマツ</th>
                 <td>-</td>
                 <td>-</td>
-                <td><button class="btn btn-sm btn-primary" type="submit">更新</button></td>
+                <td><button class="btn btn-sm btn-primary" @click="exec_scraping('dt')">更新</button></td>
             </tr>
             <tr>
                 <th>あらた</th>
                 <td>-</td>
                 <td>-</td>
-                <td><button class="btn btn-sm btn-primary" type="submit">更新</button></td>
+                <td><button class="btn btn-sm btn-primary" @click="exec_scraping('ar')">更新</button></td>
             </tr>
         </tbody>
     </table>
   </div>
 </template>
 <script>
+import axios from 'axios'
+
 export default {
-  name: 'Scraping'
+  name: 'Scraping',
+  methods: {
+    exec_scraping: function(audit_code) {
+      console.log(audit_code)
+      axios.get("https://" + window.location.host + "/api/spots/")
+        .then(response=>{
+          console.log("status:",response.status)
+          console.log("responseData:",response.data)
+        })
+    }
+  }
 }
 </script>
 
