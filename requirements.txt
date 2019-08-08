@@ -1,6 +1,7 @@
 requests
 beautifulsoup4
 pandas
+subprocess
 django
 django-rest-framework
 django-webpack-loader

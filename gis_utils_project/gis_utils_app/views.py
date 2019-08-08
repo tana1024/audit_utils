@@ -1,7 +1,9 @@
-from django.shortcuts import render
+import subprocess
+from .scraping.scraping_audit_client import ScrapingAuditClientExecutor
 from django.http import HttpResponse
 
 from rest_framework import status
+from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -16,6 +18,17 @@ def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
 
+class ExecScraping(APIView):
+
+    def get(self, request, *args, **kwargs):
+        if 'audit_code' in request.query_params:
+            subprocess.Popen(['pwd'])
+            cmd = "python ./gis_utils_app/scraping/scraping_audit_client.py " + request.query_params['audit_code']
+            subprocess.Popen(cmd.split())
+
+        return Response('accepted update')
+
+# pylint: disable=E1101
 class SpotListApiView(ListAPIView):
     model = Spot
     queryset = Spot.objects.all()

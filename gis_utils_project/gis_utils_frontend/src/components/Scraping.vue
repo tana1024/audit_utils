@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div class="alert alert-success" role="alert">テスト</div>
     <h1 class="mt-4">Scraping</h1>
     <h2>担当会社情報ステータス</h2>
     <table class="table table-bordered table-hover">
@@ -48,7 +49,7 @@ export default {
   methods: {
     exec_scraping: function(audit_code) {
       console.log(audit_code)
-      axios.get("https://" + window.location.host + "/api/spots/")
+      axios.get("https://" + window.location.host + "/api/exec_scraping", {params: {audit_code: audit_code}})
         .then(response=>{
           console.log("status:",response.status)
           console.log("responseData:",response.data)

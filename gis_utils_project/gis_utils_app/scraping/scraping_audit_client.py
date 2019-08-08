@@ -2,6 +2,7 @@ import requests
 import re
 import sqlite3
 import sys
+import argparse
 from bs4 import BeautifulSoup
 from django.db import models
 from contextlib import closing
@@ -9,18 +10,27 @@ from contextlib import closing
 
 class ScrapingAuditClientExecutor:
 
+    SIGHT_URL = 'https://上場企業サーチ.com/'
+    PAGE_CLIENT_DICT = {
+        'sn': 'analyses/auditor_clients/ＥＹ新日本有限責任監査法人?page=',
+        'az': 'analyses/auditor_clients/有限責任あずさ監査法人?page=',
+        'dt': 'analyses/auditor_clients/有限責任監査法人トーマツ?page=',
+        'ar': 'analyses/auditor_clients/ＰｗＣあらた有限責任監査法人?page='
+    }
+    audit_code = 'sn'
+
     def pre_scraping(self):
         with closing(sqlite3.connect('/workspace/gis_utils/gis_utils_project/db.sqlite3')) as conn:
             # pylint: disable=E1101
             c = conn.cursor()
-            c.execute('delete from gis_utils_app_client where 1=1')
+            c.execute('delete from gis_utils_app_client where audit_code = ' + "'" + self.audit_code + "'")
             conn.commit()
             conn.close()
 
     def scraping(self):
 
         for i in range(100):
-            response = requests.get('https://xn--vckya7nx51ik9ay55a3l3a.com/analyses/auditor_clients/%EF%BC%A5%EF%BC%B9%E6%96%B0%E6%97%A5%E6%9C%AC%E6%9C%89%E9%99%90%E8%B2%AC%E4%BB%BB%E7%9B%A3%E6%9F%BB%E6%B3%95%E4%BA%BA?page=' + str(i+1))
+            response = requests.get(self.SIGHT_URL + self.PAGE_CLIENT_DICT[self.audit_code] + str(i+1))
             # pylint: disable=E1101
             if response.status_code != requests.codes.ok:
                 print('担当企業一覧ページがありません。')
@@ -31,7 +41,7 @@ class ScrapingAuditClientExecutor:
 
             models = []
             for h in h_list:
-                response = requests.get('https://xn--vckya7nx51ik9ay55a3l3a.com/' + h)
+                response = requests.get(self.SIGHT_URL + h)
                 if response.status_code != requests.codes.ok:
                     print('担当企業詳細ページがありません。')
                     continue
@@ -40,7 +50,7 @@ class ScrapingAuditClientExecutor:
                     soup.find('h2').contents[0].strip().split(' ')[0],
                     soup.find('h2').contents[0].strip().split(' ')[1].replace('\u3000', ' '),
                     soup.find(id='address2').find('a').contents[0].strip()[9:] if len(soup.find(id='address2').find('a').contents) != 0 else 'N/A',
-                    'sn'
+                    self.audit_code
                 )
                 models.append(model)
                 print(model)
@@ -56,11 +66,16 @@ class ScrapingAuditClientExecutor:
             conn.commit()
             conn.close()
 
-    def init(self):
-        pass
+    def __init__(self, audit_code):
+        self.audit_code = audit_code
 
 
 if __name__ == '__main__':
-    exec = ScrapingAuditClientExecutor()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('audit_code')
+
+    args = parser.parse_args()
+
+    exec = ScrapingAuditClientExecutor(args.audit_code)
     exec.pre_scraping()
     exec.scraping()
