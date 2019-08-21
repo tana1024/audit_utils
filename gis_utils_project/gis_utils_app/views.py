@@ -18,6 +18,12 @@ def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
 
+class InitScraping(APIView):
+
+    def get(self, request, *args, **kwargs):
+        return Response('success init')
+
+
 class ExecScraping(APIView):
 
     def get(self, request, *args, **kwargs):
@@ -27,6 +33,7 @@ class ExecScraping(APIView):
             subprocess.Popen(cmd.split())
 
         return Response('accepted update')
+
 
 # pylint: disable=E1101
 class SpotListApiView(ListAPIView):

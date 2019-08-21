@@ -1,6 +1,5 @@
 <template>
   <div>
-    <div class="alert alert-success" role="alert">テスト</div>
     <h1 class="mt-4">Scraping</h1>
     <h2>担当会社情報ステータス</h2>
     <table class="table table-bordered table-hover">
@@ -15,27 +14,27 @@
         <tbody>
             <tr>
                 <th>新日本</th>
-                <td>-</td>
-                <td>-</td>
-                <td><button class="btn btn-sm btn-primary" @click="exec_scraping('sn')">更新</button></td>
+                <td>{{snUpdateDatetime}}</td>
+                <td>{{snUpdateStatus}}</td>
+                <td><button class="btn btn-sm btn-primary" @click="execScraping('sn')">更新</button></td>
             </tr>
             <tr>
                 <th>あずさ</th>
-                <td>-</td>
-                <td>-</td>
-                <td><button class="btn btn-sm btn-primary" @click="exec_scraping('az')">更新</button></td>
+                <td>{{azUpdateDatetime}}</td>
+                <td>{{azUpdateStatus}}</td>
+                <td><button class="btn btn-sm btn-primary" @click="execScraping('az')">更新</button></td>
             </tr>
             <tr>
                 <th>トーマツ</th>
-                <td>-</td>
-                <td>-</td>
-                <td><button class="btn btn-sm btn-primary" @click="exec_scraping('dt')">更新</button></td>
+                <td>{{dtUpdateDatetime}}</td>
+                <td>{{dtUpdateStatus}}</td>
+                <td><button class="btn btn-sm btn-primary" @click="execScraping('dt')">更新</button></td>
             </tr>
             <tr>
                 <th>あらた</th>
-                <td>-</td>
-                <td>-</td>
-                <td><button class="btn btn-sm btn-primary" @click="exec_scraping('ar')">更新</button></td>
+                <td>{{arUpdateDatetime}}</td>
+                <td>{{arUpdateStatus}}</td>
+                <td><button class="btn btn-sm btn-primary" @click="execScraping('ar')">更新</button></td>
             </tr>
         </tbody>
     </table>
@@ -46,13 +45,36 @@ import axios from 'axios'
 
 export default {
   name: 'Scraping',
-  methods: {
-    exec_scraping: function(audit_code) {
-      console.log(audit_code)
-      axios.get("https://" + window.location.host + "/api/exec_scraping", {params: {audit_code: audit_code}})
+  data: function () {
+    return {
+      snUpdateDatetime:'-',
+      snUpdateStatus:'-',
+      azUpdateDatetime:'-',
+      azUpdateStatus:'-',
+      dtUpdateDatetime:'-',
+      dtUpdateStatus:'-',
+      arUpdateDatetime:'-',
+      arUpdateStatus:'-'
+    }
+  },
+  created () {
+      axios.get('https://' + window.location.host + '/api/init_scraping')
         .then(response=>{
-          console.log("status:",response.status)
-          console.log("responseData:",response.data)
+          console.log('status:', response.status)
+          console.log('responseData:', response.data)
+          this.snUpdateStatus = response.status
+        })
+  },
+  methods: {
+    execScraping: function(audit_code) {
+      if (!confirm('クライアント情報を更新してもよろしいでしょうか？')) {
+        return
+      }
+      axios.get('https://' + window.location.host + '/api/exec_scraping', {params: {audit_code: audit_code}})
+        .then(response=>{
+          console.log('status:',response.status)
+          console.log('responseData:',response.data)
+          alert('更新リクエストを受け付けました。\n更新完了の通知ををメールでご連絡いたします。')
         })
     }
   }
