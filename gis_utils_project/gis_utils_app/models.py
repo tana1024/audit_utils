@@ -1,6 +1,30 @@
 from django.db import models
 from django.utils import timezone
 
+
+class ClientUpdateStatus(models.Model):
+    # 監査法人コード
+    audit_code = models.CharField(primary_key=True, max_length=2)
+    # 更新ステータス 0:未更新、1:更新開始、2:更新完了、9:異常終了
+    status = models.CharField(max_length=1, blank=False, default='0')
+    # 更新日時
+    update_datetime = models.DateTimeField(default=timezone.now)
+
+
+class Client(models.Model):
+    # 証券コード
+    s_code = models.CharField(primary_key=True, max_length=4)
+    # クライアント名
+    name = models.CharField(max_length=50, blank=True)
+    # 住所
+    street_address = models.CharField(max_length=100, blank=True)
+    # 監査法人コード
+    audit_code = models.CharField(max_length=2, blank=True)
+
+    class Meta:
+        ordering = ('s_code',)
+
+
 class Spot(models.Model):
     # 名前
     name = models.CharField(max_length=50)
@@ -25,26 +49,3 @@ class Spot(models.Model):
 
     class Meta:
         ordering = ('created_at',)
-
-
-class ClientUpdateStatus(models.Model):
-    # 監査法人コード
-    audit_code = models.CharField(primary_key=True, max_length=2)
-    # 更新ステータス 0:未更新、1:更新開始、2:更新完了、9:異常終了
-    status = models.CharField(max_length=1, blank=False, default='0')
-    # 更新日時
-    update_datetime = models.DateTimeField(default=timezone.now)
-
-
-class Client(models.Model):
-    # 証券コード
-    s_code = models.CharField(primary_key=True, max_length=4)
-    # クライアント名
-    name = models.CharField(max_length=50, blank=True)
-    # 住所
-    street_address = models.CharField(max_length=100, blank=True)
-    # 監査法人コード
-    audit_code = models.CharField(max_length=2, blank=True)
-
-    class Meta:
-        ordering = ('s_code',)

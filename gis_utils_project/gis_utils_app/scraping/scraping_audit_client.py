@@ -1,11 +1,9 @@
 import requests
 import re
 import sqlite3
-import sys
 import argparse
 import smtplib
 from bs4 import BeautifulSoup
-from django.db import models
 from contextlib import closing
 from email.mime.text import MIMEText
 
@@ -13,6 +11,8 @@ from email.mime.text import MIMEText
 class ScrapingAuditClientExecutor:
 
     SIGHT_URL = 'https://上場企業サーチ.com/'
+    PAGE_LIMIT = 3
+    STATUS_IN_PROGRESS = '1'
 
     AUDIT_CODE_DICT = {
         'sn': {
@@ -32,22 +32,20 @@ class ScrapingAuditClientExecutor:
             'client_url': 'analyses/auditor_clients/ＰｗＣあらた有限責任監査法人?page='
         }
     }
-    message = "%sのクライアント情報の更新が完了しました。/n" + \
+    message = "%sのクライアント情報の更新が完了しました。\n" + \
               "更新件数: %d"
-    audit_code = 'sn'
-    PAGE_LIMIT = 3
+    audit_code = 'sn'  # default value is 'sn'
     count = 0
+    cursor = None
 
     def pre_scraping(self):
-        with closing(sqlite3.connect('/workspace/gis_utils/gis_utils_project/db.sqlite3')) as conn:
-            # pylint: disable=E1101
-            c = conn.cursor()
-            c.execute('delete from gis_utils_app_client where audit_code = ' + "'" + self.audit_code + "'")
-            conn.commit()
-            conn.close()
+        self.cursor.execute("replace into gis_utils_app_clientupdatestatus (audit_code, status, update_datetime) values (?,'1', current_timestamp )", (self.audit_code,) )
+        self.cursor.execute("delete from gis_utils_app_client where audit_code = ?", (self.audit_code,) )
 
     def post_scraping(self):
         print('クライアント情報更新の通知処理開始')
+
+        self.cursor.execute("update gis_utils_app_clientupdatestatus set status = '2' where audit_code = ?", (self.audit_code,))
 
         # MIMEの作成
         subject = "クライアント情報更新の完了通知"
@@ -100,15 +98,11 @@ class ScrapingAuditClientExecutor:
         print('クライアント情報更新完了')
 
     def insert(self, models):
-        with closing(sqlite3.connect('/workspace/gis_utils/gis_utils_project/db.sqlite3')) as conn:
-            # pylint: disable=E1101
-            c = conn.cursor()
-            insert_sql = 'replace into gis_utils_app_client (s_code, name, street_address, audit_code) values (?,?,?,?)'
-            c.executemany(insert_sql, models)
-            conn.commit()
-            conn.close()
+        insert_sql = 'replace into gis_utils_app_client (s_code, name, street_address, audit_code) values (?,?,?,?)'
+        cursor.executemany(insert_sql, models)
 
-    def __init__(self, audit_code):
+    def __init__(self, cursor, audit_code):
+        self.cursor = cursor
         self.audit_code = audit_code
 
 
@@ -118,7 +112,16 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    exec = ScrapingAuditClientExecutor(args.audit_code)
-    exec.pre_scraping()
-    exec.scraping()
-    exec.post_scraping()
+    with closing(sqlite3.connect('/workspace/gis_utils/gis_utils_project/db.sqlite3')) as conn:
+        # pylint: disable=E1101
+        cursor = conn.cursor()
+        exec = ScrapingAuditClientExecutor(cursor, args.audit_code)
+        exec.pre_scraping()
+        exec.scraping()
+        exec.post_scraping()
+
+        conn.commit()
+        conn.close()
+
+
+

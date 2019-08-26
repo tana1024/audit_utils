@@ -1,5 +1,14 @@
 from rest_framework import serializers
 from .models import Spot
+from .models import ClientUpdateStatus
+
+
+class ClientUpdateStatusSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ClientUpdateStatus
+        fields = ('audit_code', 'status', 'update_datetime')
+
 
 class SpotListSerializer(serializers.ModelSerializer):
     # 名前

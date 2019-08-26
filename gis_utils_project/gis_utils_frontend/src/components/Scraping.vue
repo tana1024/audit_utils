@@ -47,6 +47,12 @@ export default {
   name: 'Scraping',
   data: function () {
     return {
+      STATUS_CODE: {
+        '0': '未更新',
+        '1': '更新開始',
+        '2': '更新完了',
+        '3': '異常終了'
+      },
       snUpdateDatetime:'-',
       snUpdateStatus:'-',
       azUpdateDatetime:'-',
@@ -54,7 +60,7 @@ export default {
       dtUpdateDatetime:'-',
       dtUpdateStatus:'-',
       arUpdateDatetime:'-',
-      arUpdateStatus:'-'
+      arUpdateStatus:'-',
     }
   },
   created () {
@@ -62,7 +68,37 @@ export default {
         .then(response=>{
           console.log('status:', response.status)
           console.log('responseData:', response.data)
-          this.snUpdateStatus = response.status
+
+          var data = {}
+          data['sn'] = response.data.filter(function(item, index){
+            if (item.audit_code == 'sn') return true
+          })
+          data['az'] = response.data.filter(function(item, index){
+            if (item.audit_code == 'az') return true
+          })
+          data['dt'] = response.data.filter(function(item, index){
+            if (item.audit_code == 'dt') return true
+          })
+          data['ar'] = response.data.filter(function(item, index){
+            if (item.audit_code == 'sn') return true
+          })
+
+          if (data['sn'] != null) {
+            this.snUpdateDatetime = (new Date(data['sn'][0].update_datetime)).toLocaleString()
+            this.snUpdateStatus = this.STATUS_CODE[data['sn'][0].status]
+          }
+          if (data['az'] != null) {
+            this.azUpdateDatetime = (new Date(data['az'][0].update_datetime)).toLocaleString()
+            this.azUpdateStatus = this.STATUS_CODE[data['az'][0].status]
+          }
+          if (data['dt'] != null) {
+            this.dtUpdateDatetime = (new Date(data['dt'][0].update_datetime)).toLocaleString()
+            this.dtUpdateStatus = this.STATUS_CODE[data['dt'][0].status]
+          }
+          if (data['ar'] != null) {
+            this.arUpdateDatetime = (new Date(data['ar'][0].update_datetime)).toLocaleString()
+            this.arUpdateStatus = this.STATUS_CODE[data['ar'][0].status]
+          }
         })
   },
   methods: {

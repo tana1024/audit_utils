@@ -3,14 +3,15 @@ from .scraping.scraping_audit_client import ScrapingAuditClientExecutor
 from django.http import HttpResponse
 
 from rest_framework import status
+from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from .models import Spot
+from .models import ClientUpdateStatus, Spot
 from .renderers import SpotJSONRenderer
-from .serializers import SpotListSerializer, SpotSerializer
+from .serializers import ClientUpdateStatusSerializer, SpotListSerializer, SpotSerializer
 
 
 # Create your views here.
@@ -18,10 +19,10 @@ def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
 
-class InitScraping(APIView):
-
-    def get(self, request, *args, **kwargs):
-        return Response('success init')
+class InitScraping(generics.ListAPIView):
+    # pylint: disable=E1101
+    queryset = ClientUpdateStatus.objects.all()
+    serializer_class = ClientUpdateStatusSerializer
 
 
 class ExecScraping(APIView):
