@@ -29,10 +29,8 @@ class ExecScraping(APIView):
 
     def get(self, request, *args, **kwargs):
         if 'audit_code' in request.query_params:
-            subprocess.Popen(['pwd'])
-            cmd = "python ./gis_utils_app/scraping/scraping_audit_client.py " + request.query_params['audit_code']
+            cmd = "bash ./gis_utils_app/scraping/launch_scraping.sh " + request.query_params['audit_code']
             subprocess.Popen(cmd.split())
-
         return Response('accepted update')
 
 

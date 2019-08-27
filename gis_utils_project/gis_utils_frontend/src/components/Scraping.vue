@@ -69,7 +69,12 @@ export default {
           console.log('status:', response.status)
           console.log('responseData:', response.data)
 
-          var data = {}
+          var data = {
+                      'sn': {0: {update_datetime: '-',status: '-'} },
+                      'az': {0: {update_datetime: '-',status: '-'} },
+                      'dt': {0: {update_datetime: '-',status: '-'} },
+                      'ar': {0: {update_datetime: '-',status: '-'} }
+                      }
           data['sn'] = response.data.filter(function(item, index){
             if (item.audit_code == 'sn') return true
           })
@@ -80,25 +85,18 @@ export default {
             if (item.audit_code == 'dt') return true
           })
           data['ar'] = response.data.filter(function(item, index){
-            if (item.audit_code == 'sn') return true
+            if (item.audit_code == 'ar') return true
           })
 
-          if (data['sn'] != null) {
-            this.snUpdateDatetime = (new Date(data['sn'][0].update_datetime)).toLocaleString()
-            this.snUpdateStatus = this.STATUS_CODE[data['sn'][0].status]
-          }
-          if (data['az'] != null) {
-            this.azUpdateDatetime = (new Date(data['az'][0].update_datetime)).toLocaleString()
-            this.azUpdateStatus = this.STATUS_CODE[data['az'][0].status]
-          }
-          if (data['dt'] != null) {
-            this.dtUpdateDatetime = (new Date(data['dt'][0].update_datetime)).toLocaleString()
-            this.dtUpdateStatus = this.STATUS_CODE[data['dt'][0].status]
-          }
-          if (data['ar'] != null) {
-            this.arUpdateDatetime = (new Date(data['ar'][0].update_datetime)).toLocaleString()
-            this.arUpdateStatus = this.STATUS_CODE[data['ar'][0].status]
-          }
+          this.snUpdateDatetime = (new Date(data['sn'][0].update_datetime)).toLocaleString()
+          this.snUpdateStatus = this.STATUS_CODE[data['sn'][0].status]
+          this.azUpdateDatetime = (new Date(data['az'][0].update_datetime)).toLocaleString()
+          this.azUpdateStatus = this.STATUS_CODE[data['az'][0].status]
+          this.dtUpdateDatetime = (new Date(data['dt'][0].update_datetime)).toLocaleString()
+          this.dtUpdateStatus = this.STATUS_CODE[data['dt'][0].status]
+          this.arUpdateDatetime = (new Date(data['ar'][0].update_datetime)).toLocaleString()
+          this.arUpdateStatus = this.STATUS_CODE[data['ar'][0].status]
+
         })
   },
   methods: {

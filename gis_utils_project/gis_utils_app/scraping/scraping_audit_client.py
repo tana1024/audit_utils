@@ -1,8 +1,11 @@
+import time
 import requests
 import re
 import sqlite3
 import argparse
 import smtplib
+import xml.etree.ElementTree as etree
+from decimal import Decimal
 from bs4 import BeautifulSoup
 from contextlib import closing
 from email.mime.text import MIMEText
@@ -11,9 +14,6 @@ from email.mime.text import MIMEText
 class ScrapingAuditClientExecutor:
 
     SIGHT_URL = 'https://上場企業サーチ.com/'
-    PAGE_LIMIT = 3
-    STATUS_IN_PROGRESS = '1'
-
     AUDIT_CODE_DICT = {
         'sn': {
             'name': '新日本監査法人',
@@ -32,6 +32,9 @@ class ScrapingAuditClientExecutor:
             'client_url': 'analyses/auditor_clients/ＰｗＣあらた有限責任監査法人?page='
         }
     }
+    GEOCODING_API_URL = 'https://www.geocoding.jp/api/'
+    PAGE_LIMIT = 3
+    STATUS_IN_PROGRESS = '1'
     message = "%sのクライアント情報の更新が完了しました。\n" + \
               "更新件数: %d"
     audit_code = 'sn'  # default value is 'sn'
@@ -45,7 +48,7 @@ class ScrapingAuditClientExecutor:
     def post_scraping(self):
         print('クライアント情報更新の通知処理開始')
 
-        self.cursor.execute("update gis_utils_app_clientupdatestatus set status = '2' where audit_code = ?", (self.audit_code,))
+        self.cursor.execute("update gis_utils_app_clientupdatestatus set status = '2', update_datetime = current_timestamp where audit_code = ?", (self.audit_code,))
 
         # MIMEの作成
         subject = "クライアント情報更新の完了通知"
@@ -63,7 +66,7 @@ class ScrapingAuditClientExecutor:
 
         print('クライアント情報更新の通知処理終了')
 
-    def scraping(self):
+    def scraping_client_information(self):
         print('クライアント情報更新開始')
 
         for i in range(self.PAGE_LIMIT):
@@ -97,8 +100,27 @@ class ScrapingAuditClientExecutor:
 
         print('クライアント情報更新完了')
 
+    def request_geocoding(self):
+
+        select_sql = "select s_code, street_address from gis_utils_app_client where audit_code = '%s' limit 2000" % (self.audit_code)
+        cursor.execute(select_sql)
+        rows = cursor.fetchall()
+        for row in rows:
+            response = requests.get(url=self.GEOCODING_API_URL, params={'q': row['street_address']})
+            data = etree.fromstring(response.text)
+            print(response.text)
+            if data.find('error') is not None:
+                continue
+            lng = data.find('coordinate').find('lng').text
+            lat = data.find('coordinate').find('lat').text
+            update_sql = 'update gis_utils_app_client set longitude = ?, latitude = ? where s_code = ?'
+            cursor.execute(update_sql, (lng, lat, row['s_code']))
+            print('s_code: %s, longitude: %s, latitude: %s' % (row['s_code'], lng, lat))
+            time.sleep(10)
+        print('geocoding情報更新完了')
+
     def insert(self, models):
-        insert_sql = 'replace into gis_utils_app_client (s_code, name, street_address, audit_code) values (?,?,?,?)'
+        insert_sql = "replace into gis_utils_app_client (s_code, name, street_address, audit_code, longitude, latitude) values (?,?,?,?,null,null)"
         cursor.executemany(insert_sql, models)
 
     def __init__(self, cursor, audit_code):
@@ -113,15 +135,15 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     with closing(sqlite3.connect('/workspace/gis_utils/gis_utils_project/db.sqlite3')) as conn:
+        conn.row_factory = sqlite3.Row
         # pylint: disable=E1101
         cursor = conn.cursor()
         exec = ScrapingAuditClientExecutor(cursor, args.audit_code)
         exec.pre_scraping()
-        exec.scraping()
+        exec.scraping_client_information()
+        exec.request_geocoding()
         exec.post_scraping()
 
         conn.commit()
         conn.close()
-
-
 

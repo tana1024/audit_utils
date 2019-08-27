@@ -18,6 +18,10 @@ class Client(models.Model):
     name = models.CharField(max_length=50, blank=True)
     # 住所
     street_address = models.CharField(max_length=100, blank=True)
+    # 経度
+    longitude = models.DecimalField(max_digits=10, decimal_places=7, null=True)
+    # 緯度
+    latitude = models.DecimalField(max_digits=10, decimal_places=7, null=True)
     # 監査法人コード
     audit_code = models.CharField(max_length=2, blank=True)
 
