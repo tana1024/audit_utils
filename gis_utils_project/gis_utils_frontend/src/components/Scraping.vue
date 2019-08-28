@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h1 class="mt-4">Scraping</h1>
-    <h2>担当会社情報ステータス</h2>
+    <h2>Scraping</h2>
+    <h4>担当会社情報ステータス</h4>
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
