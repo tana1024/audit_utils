@@ -1,7 +1,13 @@
 from rest_framework import serializers
 from .models import Spot
-from .models import ClientUpdateStatus
+from .models import Client, ClientUpdateStatus
 
+
+class ClientSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Client
+        fields = ('s_code', 'name', 'street_address', 'longitude', 'latitude', 'audit_code')
 
 class ClientUpdateStatusSerializer(serializers.ModelSerializer):
 

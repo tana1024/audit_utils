@@ -1,5 +1,6 @@
 import subprocess
-from .scraping.scraping_audit_client import ScrapingAuditClientExecutor
+from distutils.util import strtobool
+
 from django.http import HttpResponse
 
 from rest_framework import status
@@ -9,9 +10,10 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from .models import ClientUpdateStatus, Spot
+from .models import Client, ClientUpdateStatus, Spot
 from .renderers import SpotJSONRenderer
-from .serializers import ClientUpdateStatusSerializer, SpotListSerializer, SpotSerializer
+from .serializers import ClientSerializer, ClientUpdateStatusSerializer, SpotListSerializer, SpotSerializer
+from .scraping.scraping_audit_client import ScrapingAuditClientExecutor
 
 
 # Create your views here.
@@ -32,6 +34,29 @@ class ExecScraping(APIView):
             cmd = "bash ./gis_utils_app/scraping/launch_scraping.sh " + request.query_params['audit_code']
             subprocess.Popen(cmd.split())
         return Response('accepted update')
+
+
+class GetClientGioInfo(generics.ListAPIView):
+    # pylint: disable=E1101
+    serializer_class = ClientSerializer
+
+    def get_queryset(self):
+        queryset = Client.objects.all()
+        queryset = queryset.exclude(longitude=None, latitude=None)
+        filter = []
+        if bool(strtobool(self.request.query_params['check_sn'])):
+            filter.append('sn')
+        if bool(strtobool(self.request.query_params['check_az'])):
+            filter.append('az')
+        if bool(strtobool(self.request.query_params['check_dt'])):
+            filter.append('dt')
+        if bool(strtobool(self.request.query_params['check_ar'])):
+            filter.append('ar')
+
+        if len(filter) != 0:
+            queryset = queryset.filter(audit_code__in=filter)
+
+        return queryset
 
 
 # pylint: disable=E1101

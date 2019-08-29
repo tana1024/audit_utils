@@ -31,6 +31,7 @@
 <script>
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
+import axios from 'axios'
 
 export default {
   name: 'Map',
@@ -49,7 +50,11 @@ export default {
   },
   methods: {
     executeMapping: function() {
-        alert(this.checkSn + ':' + this.checkAz + ':' + this.checkDt + ':' + this.checkAr)
+      axios.get('/api/get_client_gio_info', {params: {check_sn: this.checkSn, check_az: this.checkAz, check_dt: this.checkDt, check_ar: this.checkAr}})
+        .then(response=>{
+          console.log('status:', response.status)
+          console.log('responseData:', response.data)
+        })
     }
   }
 }
