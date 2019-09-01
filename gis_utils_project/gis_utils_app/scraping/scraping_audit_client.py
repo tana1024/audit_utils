@@ -33,7 +33,7 @@ class ScrapingAuditClientExecutor:
         }
     }
     GEOCODING_API_URL = 'https://www.geocoding.jp/api/'
-    PAGE_LIMIT = 3
+    PAGE_LIMIT = 10
     STATUS_IN_PROGRESS = '1'
     message = "%sのクライアント情報の更新が完了しました。\n" + \
               "更新件数: %d"
@@ -42,13 +42,13 @@ class ScrapingAuditClientExecutor:
     cursor = None
 
     def pre_scraping(self):
-        self.cursor.execute("replace into gis_utils_app_clientupdatestatus (audit_code, status, update_datetime) values (?,'1', current_timestamp )", (self.audit_code,) )
+        self.cursor.execute("replace into gis_utils_app_clientupdatestatus (audit_code, status, update_count, update_datetime) values (?,'1', null, current_timestamp )", (self.audit_code,) )
         self.cursor.execute("delete from gis_utils_app_client where audit_code = ?", (self.audit_code,) )
 
     def post_scraping(self):
         print('クライアント情報更新の通知処理開始')
 
-        self.cursor.execute("update gis_utils_app_clientupdatestatus set status = '2', update_datetime = current_timestamp where audit_code = ?", (self.audit_code,))
+        self.cursor.execute("update gis_utils_app_clientupdatestatus set status = '2', update_count = ?, update_datetime = current_timestamp where audit_code = ?", (self.count, self.audit_code,))
 
         # MIMEの作成
         subject = "クライアント情報更新の完了通知"
@@ -73,7 +73,7 @@ class ScrapingAuditClientExecutor:
             response = requests.get(self.SIGHT_URL + self.AUDIT_CODE_DICT[self.audit_code]['client_url'] + str(i+1))
             # pylint: disable=E1101
             if response.status_code != requests.codes.ok:
-                print('担当企業一覧ページがありません。')
+                print('担当企業一覧ページはこれ以上ありません。')
                 return
             soup = BeautifulSoup(response.content, 'html.parser')
             a_list = soup.find_all('a', href=re.compile('.*/companies/.*'))

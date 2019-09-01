@@ -8,6 +8,7 @@
                 <th>法人名</th>
                 <th>更新日時</th>
                 <th>更新ステータス</th>
+                <th>更新件数</th>
                 <th>更新ボタン</th>
             </tr>
         </thead>
@@ -16,24 +17,28 @@
                 <th>新日本</th>
                 <td>{{snUpdateDatetime}}</td>
                 <td>{{snUpdateStatus}}</td>
+                <td>{{snUpdateCount}}</td>
                 <td><button class="btn btn-sm btn-primary" @click="execScraping('sn')">更新</button></td>
             </tr>
             <tr>
                 <th>あずさ</th>
                 <td>{{azUpdateDatetime}}</td>
                 <td>{{azUpdateStatus}}</td>
+                <td>{{azUpdateCount}}</td>
                 <td><button class="btn btn-sm btn-primary" @click="execScraping('az')">更新</button></td>
             </tr>
             <tr>
                 <th>トーマツ</th>
                 <td>{{dtUpdateDatetime}}</td>
                 <td>{{dtUpdateStatus}}</td>
+                <td>{{dtUpdateCount}}</td>
                 <td><button class="btn btn-sm btn-primary" @click="execScraping('dt')">更新</button></td>
             </tr>
             <tr>
                 <th>あらた</th>
                 <td>{{arUpdateDatetime}}</td>
                 <td>{{arUpdateStatus}}</td>
+                <td>{{arUpdateCount}}</td>
                 <td><button class="btn btn-sm btn-primary" @click="execScraping('ar')">更新</button></td>
             </tr>
         </tbody>
@@ -55,12 +60,16 @@ export default {
       },
       snUpdateDatetime:'-',
       snUpdateStatus:'-',
+      snUpdateCount:'-',
       azUpdateDatetime:'-',
       azUpdateStatus:'-',
+      azUpdateCount:'-',
       dtUpdateDatetime:'-',
       dtUpdateStatus:'-',
+      dtUpdateCount:'-',
       arUpdateDatetime:'-',
       arUpdateStatus:'-',
+      arUpdateCount:'-'
     }
   },
   created () {
@@ -70,10 +79,10 @@ export default {
           console.log('responseData:', response.data)
 
           var data = {
-                      'sn': {0: {update_datetime: '-',status: '-'} },
-                      'az': {0: {update_datetime: '-',status: '-'} },
-                      'dt': {0: {update_datetime: '-',status: '-'} },
-                      'ar': {0: {update_datetime: '-',status: '-'} }
+                      'sn': {0: {update_datetime: '-', update_count: '-', status: '-'} },
+                      'az': {0: {update_datetime: '-', update_count: '-', status: '-'} },
+                      'dt': {0: {update_datetime: '-', update_count: '-', status: '-'} },
+                      'ar': {0: {update_datetime: '-', update_count: '-', status: '-'} }
                       }
           data['sn'] = response.data.filter(function(item, index){
             if (item.audit_code == 'sn') return true
@@ -90,12 +99,16 @@ export default {
 
           this.snUpdateDatetime = (new Date(data['sn'][0].update_datetime)).toLocaleString()
           this.snUpdateStatus = this.STATUS_CODE[data['sn'][0].status]
+          this.snUpdateCount = data['sn'][0].update_count || '-'
           this.azUpdateDatetime = (new Date(data['az'][0].update_datetime)).toLocaleString()
           this.azUpdateStatus = this.STATUS_CODE[data['az'][0].status]
+          this.azUpdateCount = data['az'][0].update_count || '-'
           this.dtUpdateDatetime = (new Date(data['dt'][0].update_datetime)).toLocaleString()
           this.dtUpdateStatus = this.STATUS_CODE[data['dt'][0].status]
+          this.dtUpdateCount = data['dt'][0].update_count || '-'
           this.arUpdateDatetime = (new Date(data['ar'][0].update_datetime)).toLocaleString()
           this.arUpdateStatus = this.STATUS_CODE[data['ar'][0].status]
+          this.arUpdateCount = data['ar'][0].update_count || '-'
 
         })
   },

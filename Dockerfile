@@ -22,3 +22,5 @@ RUN npm install -g http-server
 #RUN npm install --save-dev node-sass sass-loader
 #RUN npm install --save-dev vue-router
 #RUN npm install --save-dev axios
+#RUN npm install --save-dev leaflet-sprite
+#RUN npm install --save-dev vue-chartjs chart.js

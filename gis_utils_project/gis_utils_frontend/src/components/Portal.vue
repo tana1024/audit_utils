@@ -8,7 +8,7 @@
           <router-link to="/portal/information" class="list-group-item list-group-item-action bg-light">Information</router-link>
           <router-link to="/portal/scraping"  class="list-group-item list-group-item-action bg-light">Scraping</router-link>
           <router-link to="/portal/map"  class="list-group-item list-group-item-action bg-light">Map</router-link>
-          <a href="#" class="list-group-item list-group-item-action bg-light">Events</a>
+          <router-link to="/portal/chart" class="list-group-item list-group-item-action bg-light">Chart</router-link>
           <a href="#" class="list-group-item list-group-item-action bg-light">Profile</a>
           <a href="#" class="list-group-item list-group-item-action bg-light">Status</a>
         </div>

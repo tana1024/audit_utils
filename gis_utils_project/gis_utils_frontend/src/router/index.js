@@ -7,6 +7,7 @@ import Portal from '@/components/Portal'
 import Information from '@/components/Information'
 import Scraping from '@/components/Scraping'
 import Map from '@/components/Map'
+import Chart from '@/components/Chart'
 
 Vue.use(Router)
 
@@ -48,6 +49,11 @@ export default new Router({
           path: 'map',
           name: 'Map',
           component: Map
+        },
+        {
+          path: 'chart',
+          name: 'Chart',
+          component: Chart
         }
       ]
     }

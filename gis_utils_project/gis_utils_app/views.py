@@ -41,6 +41,13 @@ class GetClientGioInfo(generics.ListAPIView):
     serializer_class = ClientSerializer
 
     def get_queryset(self):
+
+        if not bool(strtobool(self.request.query_params['check_sn'])) and \
+           not bool(strtobool(self.request.query_params['check_az'])) and \
+           not bool(strtobool(self.request.query_params['check_dt'])) and \
+           not bool(strtobool(self.request.query_params['check_ar'])):
+            return Client.objects.none()
+
         queryset = Client.objects.all()
         queryset = queryset.exclude(longitude=None, latitude=None)
         filter = []

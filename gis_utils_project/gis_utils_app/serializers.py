@@ -13,7 +13,7 @@ class ClientUpdateStatusSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ClientUpdateStatus
-        fields = ('audit_code', 'status', 'update_datetime')
+        fields = ('audit_code', 'status', 'update_count', 'update_datetime')
 
 
 class SpotListSerializer(serializers.ModelSerializer):
