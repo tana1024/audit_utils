@@ -3,10 +3,18 @@ from django.utils import timezone
 
 
 class ClientUpdateStatus(models.Model):
+
+    STATUS_CHOICES = (
+        ('0', '未更新'),
+        ('1', '更新開始'),
+        ('2', '更新完了'),
+        ('9', '異常終了')
+    )
+
     # 監査法人コード
     audit_code = models.CharField(primary_key=True, max_length=2)
     # 更新ステータス 0:未更新、1:更新開始、2:更新完了、9:異常終了
-    status = models.CharField(max_length=1, blank=False, default='0')
+    status = models.CharField(max_length=1, blank=False, default='0', choices=STATUS_CHOICES)
     # 更新件数
     update_count = models.IntegerField(null=True)
     # 更新日時
@@ -24,6 +32,8 @@ class Client(models.Model):
     longitude = models.DecimalField(max_digits=10, decimal_places=7, null=True)
     # 緯度
     latitude = models.DecimalField(max_digits=10, decimal_places=7, null=True)
+    # 従業員数
+    employees = models.IntegerField(null=True)
     # 監査法人コード
     audit_code = models.CharField(max_length=2, blank=True)
 

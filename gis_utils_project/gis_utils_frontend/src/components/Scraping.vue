@@ -52,12 +52,6 @@ export default {
   name: 'Scraping',
   data: function () {
     return {
-      STATUS_CODE: {
-        '0': '未更新',
-        '1': '更新開始',
-        '2': '更新完了',
-        '3': '異常終了'
-      },
       snUpdateDatetime:'-',
       snUpdateStatus:'-',
       snUpdateCount:'-',
@@ -98,16 +92,16 @@ export default {
           })
 
           this.snUpdateDatetime = (new Date(data['sn'][0].update_datetime)).toLocaleString()
-          this.snUpdateStatus = this.STATUS_CODE[data['sn'][0].status]
+          this.snUpdateStatus = data['sn'][0].status
           this.snUpdateCount = data['sn'][0].update_count || '-'
           this.azUpdateDatetime = (new Date(data['az'][0].update_datetime)).toLocaleString()
-          this.azUpdateStatus = this.STATUS_CODE[data['az'][0].status]
+          this.azUpdateStatus = data['az'][0].status
           this.azUpdateCount = data['az'][0].update_count || '-'
           this.dtUpdateDatetime = (new Date(data['dt'][0].update_datetime)).toLocaleString()
-          this.dtUpdateStatus = this.STATUS_CODE[data['dt'][0].status]
+          this.dtUpdateStatus = data['dt'][0].status
           this.dtUpdateCount = data['dt'][0].update_count || '-'
           this.arUpdateDatetime = (new Date(data['ar'][0].update_datetime)).toLocaleString()
-          this.arUpdateStatus = this.STATUS_CODE[data['ar'][0].status]
+          this.arUpdateStatus = data['ar'][0].status
           this.arUpdateCount = data['ar'][0].update_count || '-'
 
         })

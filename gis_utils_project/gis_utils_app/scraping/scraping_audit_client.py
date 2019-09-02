@@ -33,7 +33,7 @@ class ScrapingAuditClientExecutor:
         }
     }
     GEOCODING_API_URL = 'https://www.geocoding.jp/api/'
-    PAGE_LIMIT = 10
+    PAGE_LIMIT = 5
     STATUS_IN_PROGRESS = '1'
     message = "%sのクライアント情報の更新が完了しました。\n" + \
               "更新件数: %d"
@@ -90,11 +90,13 @@ class ScrapingAuditClientExecutor:
                     soup.find('h2').contents[0].strip().split(' ')[0],
                     soup.find('h2').contents[0].strip().split(' ')[1].replace('\u3000', ' '),
                     soup.find(id='address2').find('a').contents[0].strip()[9:] if len(soup.find(id='address2').find('a').contents) != 0 else 'N/A',
+                    re.sub('[^0-9]','', soup.find(text='従業員数').find_parent().find_parent().find('dd').text),
                     self.audit_code
                 )
                 models.append(model)
                 print(model)
                 self.count = self.count + 1
+                time.sleep(3)
 
             self.insert(models)
 
@@ -120,7 +122,7 @@ class ScrapingAuditClientExecutor:
         print('geocoding情報更新完了')
 
     def insert(self, models):
-        insert_sql = "replace into gis_utils_app_client (s_code, name, street_address, audit_code, longitude, latitude) values (?,?,?,?,null,null)"
+        insert_sql = "replace into gis_utils_app_client (s_code, name, street_address, longitude, latitude, employees, audit_code) values (?,?,?,null,null,?,?)"
         cursor.executemany(insert_sql, models)
 
     def __init__(self, cursor, audit_code):

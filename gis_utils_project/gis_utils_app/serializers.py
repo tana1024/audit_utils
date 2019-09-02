@@ -9,11 +9,22 @@ class ClientSerializer(serializers.ModelSerializer):
         model = Client
         fields = ('s_code', 'name', 'street_address', 'longitude', 'latitude', 'audit_code')
 
+
 class ClientUpdateStatusSerializer(serializers.ModelSerializer):
+
+    status = serializers.SerializerMethodField()
 
     class Meta:
         model = ClientUpdateStatus
         fields = ('audit_code', 'status', 'update_count', 'update_datetime')
+
+    def get_status(self,obj):
+        return obj.get_status_display()
+
+
+class ClientEmployeeChartSerializer(serializers.Serializer):
+
+    count = serializers.IntegerField()
 
 
 class SpotListSerializer(serializers.ModelSerializer):
