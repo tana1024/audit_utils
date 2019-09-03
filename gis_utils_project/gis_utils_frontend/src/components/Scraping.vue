@@ -1,7 +1,6 @@
 <template>
   <div>
-    <h2>Scraping</h2>
-    <h4>担当会社情報ステータス</h4>
+    <h3>Scraping（クライアント情報スクレイピング）</h3>
     <table class="table table-bordered table-hover">
         <thead>
             <tr>

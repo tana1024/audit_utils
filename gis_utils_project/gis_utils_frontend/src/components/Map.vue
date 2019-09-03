@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>Mapping</h2>
+    <h3>Map（クライアントアドレスマッピング）</h3>
     <div class="d-flex">
       <div id="sub-sidebar">
         <div class="list-group list-group-flush">

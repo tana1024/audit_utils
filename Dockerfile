@@ -13,7 +13,7 @@ CMD echo "install nodejs start"
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
 RUN apt-get install -y nodejs
 RUN npm install -g vue-cli
-RUN npm i bootstrap-vue
+RUN npm install -g bootstrap-vue
 RUN npm install -g http-server
 
 # 以下のinstallはローカルインストールなのでDocker起動時ではなく、個別で行うこと

@@ -8,6 +8,9 @@ import Information from '@/components/Information'
 import Scraping from '@/components/Scraping'
 import Map from '@/components/Map'
 import Chart from '@/components/Chart'
+import EmployeesChart from '@/components/chart/EmployeesChart'
+import IndustryChart from '@/components/chart/IndustryChart'
+import ServiceYearsVsIncomeChart from '@/components/chart/ServiceYearsVsIncomeChart'
 
 Vue.use(Router)
 
@@ -18,7 +21,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'login',
+      name: 'Root',
       component: Login
     },
     {
@@ -32,7 +35,7 @@ export default new Router({
       children: [
         {
           path: '',
-          name: 'Information',
+          name: 'Portal',
           component: Information
         },
         {
@@ -52,8 +55,18 @@ export default new Router({
         },
         {
           path: 'chart',
-          name: 'Chart',
-          component: Chart
+          component: Chart,
+          children: [
+            {
+              path: '',
+              name: 'Chart',
+              components: {
+                'EmployeesChart': EmployeesChart,
+                'IndustryChart': IndustryChart,
+                'ServiceYearsVsIncomeChart': ServiceYearsVsIncomeChart
+              }
+            }
+          ]
         }
       ]
     }
