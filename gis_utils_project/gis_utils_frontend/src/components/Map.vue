@@ -92,7 +92,7 @@ export default {
   width: 65vw;
 }
 #sub-sidebar {
-  height: 100vh;
+  height: 80vh;
   width: 8rem;
 }
 

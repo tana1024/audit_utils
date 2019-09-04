@@ -23,6 +23,35 @@
       </div>
       <div>
         <div>
+          <div class="bg-success text-white pl-2">財務情報</div>
+          <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <a @click="select('1')" class="nav-link" v-bind:class="{'active bg-primary text-white': isActive === '1'}">従業員数</a>
+            </li>
+            <li class="nav-item">
+              <a @click="select('2')" class="nav-link" v-bind:class="{'active bg-primary text-white': isActive === '2'}">年数</a>
+            </li>
+            <li class="nav-item">
+              <a @click="select('3')" class="nav-link" v-bind:class="{'active bg-primary text-white': isActive === '3'}">業種</a>
+            </li>
+          </ul>
+        </div>
+        <!-- タブ内容 -->
+        <div class="tab-content">
+          <div class="tab-pane" v-show="isActive === '1'" v-bind:class="{'active': isActive === '1'}">
+            <router-view class="chart" name="EmployeesChart"/>
+          </div>
+          <div class="tab-pane" v-show="isActive === '2'" v-bind:class="{'active': isActive === '2'}">
+            <router-view name="IndustryChart"/>
+          </div>
+          <div class="tab-pane" v-show="isActive === '3'" v-bind:class="{'active': isActive === '3'}">
+            <router-view name="ServiceYearsVsIncomeChart"/>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          <div class="bg-success text-white pl-2">従業員情報</div>
           <ul class="nav nav-tabs">
             <li class="nav-item">
               <a @click="select('1')" class="nav-link" v-bind:class="{'active bg-primary text-white': isActive === '1'}">従業員数</a>
@@ -83,7 +112,7 @@ export default {
 </script>
 <style>
 #sub-sidebar {
-  height: 100vh;
+  height: 80vh;
   width: 8rem;
 }
 
@@ -99,8 +128,8 @@ export default {
 .ck_ar_label {
   color: orange;
 }
-.chart {
-  width: 500px;
-  height: 500px;
+.tab-content {
+  height: 35vh;
+  width: 35vw;
 }
 </style>
