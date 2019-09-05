@@ -2,8 +2,8 @@ FROM python:3.7
 
 CMD echo "pip start"
 WORKDIR /tmptmp/
-COPY require.txt .
-RUN pip install -r require.txt
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
 CMD echo "install sqlite3 start"
 RUN apt-get update

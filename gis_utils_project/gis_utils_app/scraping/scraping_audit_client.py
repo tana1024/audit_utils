@@ -50,21 +50,21 @@ class ScrapingAuditClientExecutor:
 
         self.cursor.execute("update gis_utils_app_clientupdatestatus set status = '2', update_count = ?, update_datetime = current_timestamp where audit_code = ?", (self.count, self.audit_code,))
 
-        # MIMEの作成
-        subject = "クライアント情報更新の完了通知"
-        self.message = self.message % (self.AUDIT_CODE_DICT[self.audit_code]['name'], self.count)
-        msg = MIMEText(self.message, 'plain')
-        msg["Subject"] = subject
-        msg["To"] = 'tana2dev1@gmail.com'
-        msg["From"] = 'tana2dev3@gmail.com'
+    #     # MIMEの作成
+    #     subject = "クライアント情報更新の完了通知"
+    #     self.message = self.message % (self.AUDIT_CODE_DICT[self.audit_code]['name'], self.count)
+    #     msg = MIMEText(self.message, 'plain')
+    #     msg["Subject"] = subject
+    #     msg["To"] = 'XXXXXXXXX@XXXXX.XXX'  # 値を設定すること
+    #     msg["From"] = 'XXXXXXXXX@XXXXX.XXX'  # 値を設定すること
 
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
-        server.login('tana2dev3@gmail.com', 'heroku2!git')
-        server.send_message(msg)
-        server.quit()
+    #     server = smtplib.SMTP('smtp.XXXXX.XXX', 587)  # 値を設定すること
+    #     server.starttls()
+    #     server.login('XXXXXXXXX@XXXXX.XXX', 'XXXXXXXXXXX')  # 値を設定すること
+    #     server.send_message(msg)
+    #     server.quit()
 
-        print('クライアント情報更新の通知処理終了')
+    #     print('クライアント情報更新の通知処理終了')
 
     def scraping_client_information(self):
         print('クライアント情報更新開始')
