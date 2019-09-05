@@ -85,14 +85,27 @@ class ScrapingAuditClientExecutor:
                 if response.status_code != requests.codes.ok:
                     print('担当企業詳細ページがありません。')
                     continue
+
                 soup = BeautifulSoup(response.content, "html.parser")
-                model = (
-                    soup.find('h2').contents[0].strip().split(' ')[0],
-                    soup.find('h2').contents[0].strip().split(' ')[1].replace('\u3000', ' '),
-                    soup.find(id='address2').find('a').contents[0].strip()[9:] if len(soup.find(id='address2').find('a').contents) != 0 else 'N/A',
-                    re.sub('[^0-9]','', soup.find(text='従業員数').find_parent().find_parent().find('dd').text),
-                    self.audit_code
-                )
+                try :
+                    model = (
+                        soup.find('h2').contents[0].strip().split(' ')[0],
+                        soup.find('h2').contents[0].strip().split(' ')[1].replace('\u3000', ' '),
+                        soup.find(id='address2').find('a').contents[0].strip()[9:],
+                        re.sub('[^0-9]','', soup.find(text='従業員数').find_parent().find_parent().find_all('dd')[0].text),
+                        re.sub('[^0-9\.]','', soup.find(text='平均年齢').find_parent().find_parent().find_all('dd')[1].text),
+                        re.sub('[^0-9\.]','', soup.find(text='平均勤続年数').find_parent().find_parent().find_all('dd')[2].text),
+                        re.sub('[^0-9]','', soup.find(text='年間給与').find_parent().find_parent().find_all('dd')[3].text),
+                        re.sub('[^0-9]','', soup.find(text='売上高').find_parent().find_parent().find_all('td')[6].text),
+                        re.sub('[^0-9]','', soup.find(text='経常利益又は経常損失（△）').find_parent().find_parent().find_all('td')[6].text),
+                        re.sub('[^0-9]','', soup.find(text='当期純利益又は当期純損失（△）').find_parent().find_parent().find_all('td')[6].text),
+                        self.audit_code
+                    )
+                except Exception as e:
+                    print('スクレイピングエラー count:%d' % self.count)
+                    print(e)
+                    continue
+
                 models.append(model)
                 print(model)
                 self.count = self.count + 1
@@ -122,7 +135,7 @@ class ScrapingAuditClientExecutor:
         print('geocoding情報更新完了')
 
     def insert(self, models):
-        insert_sql = "replace into gis_utils_app_client (s_code, name, street_address, longitude, latitude, employees, audit_code) values (?,?,?,null,null,?,?)"
+        insert_sql = "replace into gis_utils_app_client (s_code, name, street_address, longitude, latitude, employees, ave_age, service_years, employee_income, sales, ordinary_income, net_income, audit_code) values (?,?,?,null,null,?,?,?,?,?,?,?,?)"
         cursor.executemany(insert_sql, models)
 
     def __init__(self, cursor, audit_code):

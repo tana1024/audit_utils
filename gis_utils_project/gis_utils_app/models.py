@@ -34,6 +34,18 @@ class Client(models.Model):
     latitude = models.DecimalField(max_digits=10, decimal_places=7, null=True)
     # 従業員数
     employees = models.IntegerField(null=True)
+    # 平均年齢
+    ave_age = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    # 平均勤続年数
+    service_years = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    # 年収
+    employee_income = models.IntegerField(null=True)
+    # 売上高
+    sales = models.IntegerField(null=True)
+    # 経常利益
+    ordinary_income = models.IntegerField(null=True)
+    # 当期純利益
+    net_income = models.IntegerField(null=True)
     # 監査法人コード
     audit_code = models.CharField(max_length=2, blank=True)
 

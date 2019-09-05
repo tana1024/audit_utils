@@ -59,7 +59,6 @@ class GetClientGioInfo(generics.ListAPIView):
             filter_element.append('dt')
         if bool(strtobool(self.request.query_params['check_ar'])):
             filter_element.append('ar')
-
         if filter_element:
             queryset = queryset.filter(audit_code__in=filter_element)
 
