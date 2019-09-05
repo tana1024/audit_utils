@@ -1,6 +1,7 @@
 requests
 beautifulsoup4
 pandas
+numpy
 django
 django-rest-framework
 django-webpack-loader
