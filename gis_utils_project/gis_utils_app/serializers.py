@@ -24,8 +24,13 @@ class ClientUpdateStatusSerializer(serializers.ModelSerializer):
 
 class ClientEmployeeChartSerializer(serializers.Serializer):
 
-    count = serializers.IntegerField()
-
+    audit_code = serializers.CharField()
+    count_1_100 = serializers.IntegerField()
+    count_100_300 = serializers.IntegerField()
+    count_300_1000 = serializers.IntegerField()
+    count_1000_3000 = serializers.IntegerField()
+    count_3000_10000 = serializers.IntegerField()
+    count_10000_over = serializers.IntegerField()
 
 class SpotListSerializer(serializers.ModelSerializer):
     # 名前

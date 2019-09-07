@@ -1,5 +1,6 @@
 <script>
 import { Bar } from 'vue-chartjs'
+import { mapState } from 'vuex'
 
 export default {
   name: 'EmployeesChart',
@@ -29,8 +30,19 @@ export default {
           }
       }
   },
+  computed: {
+    ...mapState({
+      "count": state => state.chartData.count,
+    }),
+  },
   mounted: function() {
+    alert('start')
     this.renderChart(this.chartData, this.options)
+  },
+  methods: {
+    execute: function() {
+      alert(this.count)
+    }
   }
 }
 </script>

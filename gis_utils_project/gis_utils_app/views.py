@@ -13,8 +13,6 @@ from rest_framework.response import Response
 from .models import Client, ClientUpdateStatus, Spot
 from .renderers import SpotJSONRenderer
 from .serializers import ClientSerializer, ClientUpdateStatusSerializer, ClientEmployeeChartSerializer, SpotListSerializer, SpotSerializer
-from .scraping.scraping_audit_client import ScrapingAuditClientExecutor
-
 
 # Create your views here.
 def index(request):
@@ -69,17 +67,44 @@ class GetClientEmployeeChartData(generics.ListAPIView):
 
     serializer_class = ClientEmployeeChartSerializer
 
-    def get_queryset(self):
+    def get_queryset(self, under, over=None):
         # pylint: disable=E1101
         queryset = Client.objects.all()
         queryset = queryset.filter(audit_code='dt')
-        queryset = queryset.filter(employees__lte=500)
-        queryset = queryset.filter(employees__gte=100)
+        queryset = queryset.filter(employees__lt=over) if over else queryset
+        queryset = queryset.filter(employees__gte=under)
         return len(queryset)
 
+    def aggregate_employees(self, audit_code):
+        return {
+            'audit_code': audit_code,
+            'count_1_100': self.get_queryset(0, 300),
+            'count_100_300': self.get_queryset(100, 300),
+            'count_300_1000': self.get_queryset(300, 1000),
+            'count_1000_3000': self.get_queryset(1000, 3000),
+            'count_3000_10000': self.get_queryset(3000, 10000),
+            'count_10000_over': self.get_queryset(10000)
+        }
+
     def list(self, request):
-        count = self.get_queryset()
-        serializer = self.get_serializer(data={'count': count})
+        # pylint: disable=E1101
+        if not bool(strtobool(self.request.query_params['check_sn'])) and \
+           not bool(strtobool(self.request.query_params['check_az'])) and \
+           not bool(strtobool(self.request.query_params['check_dt'])) and \
+           not bool(strtobool(self.request.query_params['check_ar'])):
+            return Response()
+
+        list_aggregate = []
+        if bool(strtobool(self.request.query_params['check_sn'])):
+            list_aggregate.append(self.aggregate_employees('sn'))
+        if bool(strtobool(self.request.query_params['check_az'])):
+            list_aggregate.append(self.aggregate_employees('az'))
+        if bool(strtobool(self.request.query_params['check_dt'])):
+            list_aggregate.append(self.aggregate_employees('dt'))
+        if bool(strtobool(self.request.query_params['check_ar'])):
+            list_aggregate.append(self.aggregate_employees('ar'))
+
+        serializer = self.get_serializer(data=list_aggregate, many=True)
         serializer.is_valid()
         return Response(serializer.validated_data)
 

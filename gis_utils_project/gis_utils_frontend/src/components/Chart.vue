@@ -39,7 +39,7 @@
         <!-- タブ内容 -->
         <div class="tab-content">
           <div class="tab-pane" v-show="isActive === '1'" v-bind:class="{'active': isActive === '1'}">
-            <router-view class="chart" name="EmployeesChart"/>
+            <router-view ref="EmployeesChart" class="chart" name="EmployeesChart"/>
           </div>
           <div class="tab-pane" v-show="isActive === '2'" v-bind:class="{'active': isActive === '2'}">
             <router-view name="IndustryChart"/>
@@ -67,7 +67,7 @@
         <!-- タブ内容 -->
         <div class="tab-content">
           <div class="tab-pane" v-show="isActive === '1'" v-bind:class="{'active': isActive === '1'}">
-            <router-view class="chart" name="EmployeesChart"/>
+            <router-view ref="EmployeesChart" class="chart" name="EmployeesChart"/>
           </div>
           <div class="tab-pane" v-show="isActive === '2'" v-bind:class="{'active': isActive === '2'}">
             <router-view name="IndustryChart"/>
@@ -82,6 +82,7 @@
 </template>
 <script>
 import axios from 'axios'
+import { mapMutations } from 'vuex'
 
 export default {
   name: 'Chart',
@@ -94,18 +95,24 @@ export default {
       checkAr: false
     }
   },
-  created() {
-    axios.get('https://' + window.location.host + '/api/get_client_employee_chart_data')
-      .then(response=>{
-        console.log('status:', response.status)
-        console.log('responseData:', response.data)
-      })
-  },
   methods: {
     select: function(id) {
       this.isActive = id
     },
     executePlot: function() {
+      axios.get('https://' + window.location.host + '/api/get_client_employee_chart_data', {params: {check_sn: this.checkSn, check_az: this.checkAz, check_dt: this.checkDt, check_ar: this.checkAr}})
+        .then(response=>{
+          console.log('status:', response.status)
+          console.log('responseData:', response.data)
+          this.add(1000)
+        })
+    },
+    ...mapMutations({
+      setting: 'chartData/setting'
+    }),
+    add (count) {
+      alert(count)
+      this.setting()
     }
   }
 }
