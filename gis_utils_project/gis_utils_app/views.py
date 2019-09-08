@@ -67,10 +67,10 @@ class GetClientEmployeeChartData(generics.ListAPIView):
 
     serializer_class = ClientEmployeeChartSerializer
 
-    def get_queryset(self, under, over=None):
+    def get_queryset(self, audit_code, under, over=None):
         # pylint: disable=E1101
         queryset = Client.objects.all()
-        queryset = queryset.filter(audit_code='dt')
+        queryset = queryset.filter(audit_code=audit_code)
         queryset = queryset.filter(employees__lt=over) if over else queryset
         queryset = queryset.filter(employees__gte=under)
         return len(queryset)
@@ -78,12 +78,12 @@ class GetClientEmployeeChartData(generics.ListAPIView):
     def aggregate_employees(self, audit_code):
         return {
             'audit_code': audit_code,
-            'count_1_100': self.get_queryset(0, 300),
-            'count_100_300': self.get_queryset(100, 300),
-            'count_300_1000': self.get_queryset(300, 1000),
-            'count_1000_3000': self.get_queryset(1000, 3000),
-            'count_3000_10000': self.get_queryset(3000, 10000),
-            'count_10000_over': self.get_queryset(10000)
+            'count_1_100': self.get_queryset(audit_code, 0, 300),
+            'count_100_300': self.get_queryset(audit_code, 100, 300),
+            'count_300_1000': self.get_queryset(audit_code, 300, 1000),
+            'count_1000_3000': self.get_queryset(audit_code, 1000, 3000),
+            'count_3000_10000': self.get_queryset(audit_code, 3000, 10000),
+            'count_10000_over': self.get_queryset(audit_code, 10000)
         }
 
     def list(self, request):
