@@ -1,11 +1,11 @@
 export const ChartData = {
   namespaced: true,
   state: {
-      count: 0
+      aggregateList: []
   },
   mutations: {
-    setting (state) {
-      state.count = 99
+    setAggregateList (state, aggregateList) {
+      state.aggregateList = aggregateList
     }
   }
 }

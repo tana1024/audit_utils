@@ -1,12 +1,12 @@
 <template>
   <div>
-    ServiceYearsVsIncomeChart
+    OrdinaryIncomeChart
   </div>
 </template>
 
 <script>
 export default {
-  name: 'ServiceYearsVsIncomeChart'
+  name: 'OrdinaryIncomeChart'
 
 }
 </script>

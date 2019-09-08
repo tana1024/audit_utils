@@ -26,26 +26,32 @@
           <div class="bg-success text-white pl-2">財務情報</div>
           <ul class="nav nav-tabs">
             <li class="nav-item">
-              <a @click="select('1')" class="nav-link" v-bind:class="{'active bg-primary text-white': isActive === '1'}">従業員数</a>
+              <a @click="selectLeftTab('1')" class="nav-link" v-bind:class="{'active bg-primary text-white': isLeftActive === '1'}">従業員数</a>
             </li>
             <li class="nav-item">
-              <a @click="select('2')" class="nav-link" v-bind:class="{'active bg-primary text-white': isActive === '2'}">年数</a>
+              <a @click="selectLeftTab('2')" class="nav-link" v-bind:class="{'active bg-primary text-white': isLeftActive === '2'}">平均年齢</a>
             </li>
             <li class="nav-item">
-              <a @click="select('3')" class="nav-link" v-bind:class="{'active bg-primary text-white': isActive === '3'}">業種</a>
+              <a @click="selectLeftTab('3')" class="nav-link" v-bind:class="{'active bg-primary text-white': isLeftActive === '3'}">平均勤続年数</a>
+            </li>
+            <li class="nav-item">
+              <a @click="selectLeftTab('4')" class="nav-link" v-bind:class="{'active bg-primary text-white': isLeftActive === '4'}">年収</a>
             </li>
           </ul>
         </div>
         <!-- タブ内容 -->
         <div class="tab-content">
-          <div class="tab-pane" v-show="isActive === '1'" v-bind:class="{'active': isActive === '1'}">
+          <div class="tab-pane" v-show="isLeftActive === '1'" v-bind:class="{'active': isLeftActive === '1'}">
             <router-view ref="EmployeesChart" class="chart" name="EmployeesChart"/>
           </div>
-          <div class="tab-pane" v-show="isActive === '2'" v-bind:class="{'active': isActive === '2'}">
-            <router-view name="IndustryChart"/>
+          <div class="tab-pane" v-show="isLeftActive === '2'" v-bind:class="{'active': isLeftActive === '2'}">
+            <router-view name="AverageAgeChart"/>
           </div>
-          <div class="tab-pane" v-show="isActive === '3'" v-bind:class="{'active': isActive === '3'}">
-            <router-view name="ServiceYearsVsIncomeChart"/>
+          <div class="tab-pane" v-show="isLeftActive === '3'" v-bind:class="{'active': isLeftActive === '3'}">
+            <router-view name="ServiceYearsChart"/>
+          </div>
+          <div class="tab-pane" v-show="isLeftActive === '4'" v-bind:class="{'active': isLeftActive === '4'}">
+            <router-view name="IncomeChart"/>
           </div>
         </div>
       </div>
@@ -54,26 +60,26 @@
           <div class="bg-success text-white pl-2">従業員情報</div>
           <ul class="nav nav-tabs">
             <li class="nav-item">
-              <a @click="select('1')" class="nav-link" v-bind:class="{'active bg-primary text-white': isActive === '1'}">従業員数</a>
+              <a @click="selectRightTab('1')" class="nav-link" v-bind:class="{'active bg-primary text-white': isRightActive === '1'}">売上</a>
             </li>
             <li class="nav-item">
-              <a @click="select('2')" class="nav-link" v-bind:class="{'active bg-primary text-white': isActive === '2'}">年数</a>
+              <a @click="selectRightTab('2')" class="nav-link" v-bind:class="{'active bg-primary text-white': isRightActive === '2'}">経常利益</a>
             </li>
             <li class="nav-item">
-              <a @click="select('3')" class="nav-link" v-bind:class="{'active bg-primary text-white': isActive === '3'}">業種</a>
+              <a @click="selectRightTab('3')" class="nav-link" v-bind:class="{'active bg-primary text-white': isRightActive === '3'}">当期純利益</a>
             </li>
           </ul>
         </div>
         <!-- タブ内容 -->
         <div class="tab-content">
-          <div class="tab-pane" v-show="isActive === '1'" v-bind:class="{'active': isActive === '1'}">
-            <router-view ref="EmployeesChart" class="chart" name="EmployeesChart"/>
+          <div class="tab-pane" v-show="isRightActive === '1'" v-bind:class="{'active': isRightActive === '1'}">
+            <router-view class="chart" name="SalesChart"/>
           </div>
-          <div class="tab-pane" v-show="isActive === '2'" v-bind:class="{'active': isActive === '2'}">
-            <router-view name="IndustryChart"/>
+          <div class="tab-pane" v-show="isRightActive === '2'" v-bind:class="{'active': isRightActive === '2'}">
+            <router-view name="OrdinaryIncomeChart"/>
           </div>
-          <div class="tab-pane" v-show="isActive === '3'" v-bind:class="{'active': isActive === '3'}">
-            <router-view name="ServiceYearsVsIncomeChart"/>
+          <div class="tab-pane" v-show="isRightActive === '3'" v-bind:class="{'active': isRightActive === '3'}">
+            <router-view name="NetIncomeChart"/>
           </div>
         </div>
       </div>
@@ -88,7 +94,8 @@ export default {
   name: 'Chart',
   data: function () {
     return {
-      isActive: '1',
+      isLeftActive: '1',
+      isRightActive: '1',
       checkSn: false,
       checkAz: false,
       checkDt: false,
@@ -96,23 +103,26 @@ export default {
     }
   },
   methods: {
-    select: function(id) {
-      this.isActive = id
+    selectLeftTab: function(id) {
+      this.isLeftActive = id
+    },
+    selectRightTab: function(id) {
+      this.isRightActive = id
     },
     executePlot: function() {
       axios.get('https://' + window.location.host + '/api/get_client_employee_chart_data', {params: {check_sn: this.checkSn, check_az: this.checkAz, check_dt: this.checkDt, check_ar: this.checkAr}})
         .then(response=>{
           console.log('status:', response.status)
           console.log('responseData:', response.data)
-          this.add(1000)
+          this.setData(response.data)
+          this.$refs['EmployeesChart'].plot()
         })
     },
     ...mapMutations({
-      setting: 'chartData/setting'
+      setAggregateList: 'chartData/setAggregateList'
     }),
-    add (count) {
-      alert(count)
-      this.setting()
+    setData (data) {
+      this.setAggregateList(data)
     }
   }
 }

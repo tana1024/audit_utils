@@ -9,8 +9,12 @@ import Scraping from '@/components/Scraping'
 import Map from '@/components/Map'
 import Chart from '@/components/Chart'
 import EmployeesChart from '@/components/chart/EmployeesChart'
-import IndustryChart from '@/components/chart/IndustryChart'
-import ServiceYearsVsIncomeChart from '@/components/chart/ServiceYearsVsIncomeChart'
+import AverageAgeChart from '@/components/chart/AverageAgeChart'
+import ServiceYearsChart from '@/components/chart/ServiceYearsChart'
+import IncomeChart from '@/components/chart/IncomeChart'
+import SalesChart from '@/components/chart/SalesChart'
+import OrdinaryIncomeChart from '@/components/chart/OrdinaryIncomeChart'
+import NetIncomeChart from '@/components/chart/NetIncomeChart'
 
 Vue.use(Router)
 
@@ -62,8 +66,12 @@ export default new Router({
               name: 'Chart',
               components: {
                 'EmployeesChart': EmployeesChart,
-                'IndustryChart': IndustryChart,
-                'ServiceYearsVsIncomeChart': ServiceYearsVsIncomeChart
+                'AverageAgeChart': AverageAgeChart,
+                'ServiceYearsChart': ServiceYearsChart,
+                'IncomeChart': IncomeChart,
+                'SalesChart': SalesChart,
+                'OrdinaryIncomeChart': OrdinaryIncomeChart,
+                'NetIncomeChart': NetIncomeChart
               }
             }
           ]

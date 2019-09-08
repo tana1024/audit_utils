@@ -8,17 +8,17 @@ export default {
   data() {
       return {
           chartData: {
-              labels: ['Janualy', 'Februaly', 'March'],
+              labels: ['0-100', '100-300', '300-1000', '1000-3000', '3000-10000', '10000-'],
               datasets: [{
-                  label: 'sample',
+                  label: '',
                   backgroundColor:'rgba(255, 60, 60, 0.3)',
-                  data: [20, 40, 60]
+                  data: [0, 0, 0, 0, 0, 0]
               }]
           },
           options: {
               title: {
                   display: true,
-                  text: 'Bar chart'
+                  text: '従業員数グラフ'
               },
               scales: {
                   yAxes: [{
@@ -32,16 +32,28 @@ export default {
   },
   computed: {
     ...mapState({
-      "count": state => state.chartData.count,
+      "aggregateList": state => state.chartData.aggregateList,
     }),
   },
   mounted: function() {
-    alert('start')
     this.renderChart(this.chartData, this.options)
   },
   methods: {
-    execute: function() {
-      alert(this.count)
+    plot: function() {
+      for (let agData of this.aggregateList) {
+        if (agData.audit_code = 'sn') {
+          this.genChartData(agData)
+        }
+      }
+      this.renderChart(this.chartData, this.options)
+    },
+    genChartData (agData) {
+      let param = {label: '新日本', backgroundColor:'rgba(255, 255, 0, 0.3)',
+                  data:
+                    [agData.count_1_100, agData.count_100_300, agData.count_300_1000,
+                     agData.count_1000_3000, agData.count_3000_10000, agData.count_10000_over]
+                  }
+      this.chartData.datasets = [param]
     }
   }
 }
