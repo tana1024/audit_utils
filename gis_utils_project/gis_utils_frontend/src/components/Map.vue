@@ -62,7 +62,7 @@ export default {
   },
   methods: {
     executeMapping: function() {
-      axios.get('/api/get_client_gio_info', {params: {check_sn: this.checkSn, check_az: this.checkAz, check_dt: this.checkDt, check_ar: this.checkAr}})
+      axios.get('/api/map/get_client_gio_info', {params: {check_sn: this.checkSn, check_az: this.checkAz, check_dt: this.checkDt, check_ar: this.checkAr}})
         .then(response=>{
           console.log('status:', response.status)
           console.log('responseData:', response.data)

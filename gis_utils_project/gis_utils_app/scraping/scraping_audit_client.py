@@ -135,7 +135,7 @@ class ScrapingAuditClientExecutor:
         print('geocoding情報更新完了')
 
     def insert(self, models):
-        insert_sql = "replace into gis_utils_app_client (s_code, name, street_address, longitude, latitude, employees, ave_age, service_years, employee_income, sales, ordinary_income, net_income, audit_code) values (?,?,?,null,null,?,?,?,?,?,?,?,?)"
+        insert_sql = "replace into gis_utils_app_client (s_code, name, street_address, longitude, latitude, employees, average_age, service_years, income, sales, ordinary_income, net_income, audit_code) values (?,?,?,null,null,?,?,?,?,?,?,?,?)"
         cursor.executemany(insert_sql, models)
 
     def __init__(self, cursor, audit_code):

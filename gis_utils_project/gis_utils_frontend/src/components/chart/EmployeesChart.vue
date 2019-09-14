@@ -29,9 +29,21 @@ export default {
               },
               scales: {
                   yAxes: [{
-                          ticks: {
-                              beginAtZero: true,
-                          }
+                    display: true,
+                    scaleLabel: {
+                       display: true,
+                       labelString: 'クライアント数'
+                    },
+                    ticks: {
+                        beginAtZero: true,
+                    }
+                  }],
+                  xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                       display: true,
+                       labelString: '従業員数'
+                    }
                   }]
               }
           }

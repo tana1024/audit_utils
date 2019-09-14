@@ -12,15 +12,15 @@ from rest_framework.response import Response
 
 from .models import Client, ClientUpdateStatus, Spot
 from .renderers import SpotJSONRenderer
-from .serializers import ClientSerializer, ClientUpdateStatusSerializer, ClientEmployeeChartSerializer, SpotListSerializer, SpotSerializer
+from .serializers import ClientSerializer, ClientUpdateStatusSerializer, ClientEmployeesChartSerializer, ClientAverageAgeChartSerializer, SpotListSerializer, SpotSerializer
 
+# pylint: disable=E1101
 # Create your views here.
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
 
 class InitScraping(generics.ListAPIView):
-    # pylint: disable=E1101
     queryset = ClientUpdateStatus.objects.all()
     serializer_class = ClientUpdateStatusSerializer
 
@@ -39,7 +39,6 @@ class GetClientGioInfo(generics.ListAPIView):
     serializer_class = ClientSerializer
 
     def get_queryset(self):
-        # pylint: disable=E1101
         if not bool(strtobool(self.request.query_params['check_sn'])) and \
            not bool(strtobool(self.request.query_params['check_az'])) and \
            not bool(strtobool(self.request.query_params['check_dt'])) and \
@@ -47,6 +46,7 @@ class GetClientGioInfo(generics.ListAPIView):
             return Client.objects.none()
 
         queryset = Client.objects.all()
+
         queryset = queryset.exclude(longitude=None, latitude=None)
         filter_element = []
         if bool(strtobool(self.request.query_params['check_sn'])):
@@ -63,12 +63,11 @@ class GetClientGioInfo(generics.ListAPIView):
         return queryset
 
 
-class GetClientEmployeeChartData(generics.ListAPIView):
+class GetClientEmployeesChartData(generics.ListAPIView):
 
-    serializer_class = ClientEmployeeChartSerializer
+    serializer_class = ClientEmployeesChartSerializer
 
     def get_queryset(self, audit_code, under, over=None):
-        # pylint: disable=E1101
         queryset = Client.objects.all()
         queryset = queryset.filter(audit_code=audit_code)
         queryset = queryset.filter(employees__lt=over) if over else queryset
@@ -87,12 +86,11 @@ class GetClientEmployeeChartData(generics.ListAPIView):
         }
 
     def list(self, request):
-        # pylint: disable=E1101
         if not bool(strtobool(self.request.query_params['check_sn'])) and \
            not bool(strtobool(self.request.query_params['check_az'])) and \
            not bool(strtobool(self.request.query_params['check_dt'])) and \
            not bool(strtobool(self.request.query_params['check_ar'])):
-            return Response()
+            return Response([]) #  return empty
 
         list_aggregate = []
         if bool(strtobool(self.request.query_params['check_sn'])):
@@ -108,8 +106,34 @@ class GetClientEmployeeChartData(generics.ListAPIView):
         serializer.is_valid()
         return Response(serializer.validated_data)
 
+class GetClientAverageAgeChartData(generics.ListAPIView):
+    serializer_class = ClientAverageAgeChartSerializer
 
-# pylint: disable=E1101
+    def get_queryset(self):
+        if not bool(strtobool(self.request.query_params['check_sn'])) and \
+           not bool(strtobool(self.request.query_params['check_az'])) and \
+           not bool(strtobool(self.request.query_params['check_dt'])) and \
+           not bool(strtobool(self.request.query_params['check_ar'])):
+            return Client.objects.none()
+
+        queryset = Client.objects.all()
+        queryset = queryset.exclude(average_age=0.0)
+        queryset = queryset.exclude(income=0)
+        filter_element = []
+        if bool(strtobool(self.request.query_params['check_sn'])):
+            filter_element.append('sn')
+        if bool(strtobool(self.request.query_params['check_az'])):
+            filter_element.append('az')
+        if bool(strtobool(self.request.query_params['check_dt'])):
+            filter_element.append('dt')
+        if bool(strtobool(self.request.query_params['check_ar'])):
+            filter_element.append('ar')
+        if filter_element:
+            queryset = queryset.filter(audit_code__in=filter_element)
+
+        return queryset
+
+
 class SpotListApiView(ListAPIView):
     model = Spot
     queryset = Spot.objects.all()

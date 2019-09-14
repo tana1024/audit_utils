@@ -66,7 +66,7 @@ export default {
     }
   },
   created () {
-      axios.get('https://' + window.location.host + '/api/init_scraping')
+      axios.get('https://' + window.location.host + '/api/scraping/init_scraping')
         .then(response=>{
           console.log('status:', response.status)
           console.log('responseData:', response.data)
@@ -110,7 +110,7 @@ export default {
       if (!confirm('クライアント情報を更新してもよろしいでしょうか？')) {
         return
       }
-      axios.get('https://' + window.location.host + '/api/exec_scraping', {params: {audit_code: audit_code}})
+      axios.get('https://' + window.location.host + '/api/scraping/exec_scraping', {params: {audit_code: audit_code}})
         .then(response=>{
           console.log('status:',response.status)
           console.log('responseData:',response.data)
