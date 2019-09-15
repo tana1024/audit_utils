@@ -26,6 +26,22 @@ export default {
               title: {
                   display: true,
                   text: '平均年齢グラフ'
+              },
+              scales: {
+                  yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                       display: true,
+                       labelString: '年収'
+                    }
+                  }],
+                  xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                       display: true,
+                       labelString: '平均年齢'
+                    }
+                  }]
               }
           }
       }

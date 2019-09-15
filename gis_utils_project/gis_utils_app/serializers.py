@@ -22,21 +22,27 @@ class ClientUpdateStatusSerializer(serializers.ModelSerializer):
         return obj.get_status_display()
 
 
-class ClientEmployeesChartSerializer(serializers.Serializer):
+class ClientBarChartSerializer(serializers.Serializer):
 
     audit_code = serializers.CharField()
-    count_1_100 = serializers.IntegerField()
-    count_100_300 = serializers.IntegerField()
-    count_300_1000 = serializers.IntegerField()
-    count_1000_3000 = serializers.IntegerField()
-    count_3000_10000 = serializers.IntegerField()
-    count_10000_over = serializers.IntegerField()
+    count_section1 = serializers.IntegerField()
+    count_section2 = serializers.IntegerField()
+    count_section3 = serializers.IntegerField()
+    count_section4 = serializers.IntegerField()
+    count_section5 = serializers.IntegerField()
+    count_section6 = serializers.IntegerField()
 
 class ClientAverageAgeChartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Client
         fields = ('average_age', 'income', 'audit_code')
+
+class ClientServiceYearsChartSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Client
+        fields = ('service_years', 'income', 'audit_code')
 
 class SpotListSerializer(serializers.ModelSerializer):
     # 名前
