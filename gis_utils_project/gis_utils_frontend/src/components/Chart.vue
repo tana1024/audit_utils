@@ -23,7 +23,7 @@
       </div>
       <div>
         <div>
-          <div class="bg-success text-white pl-2">財務情報</div>
+          <div class="bg-success text-white pl-2">従業員情報</div>
           <ul class="nav nav-tabs">
             <li class="nav-item">
               <a @click="selectLeftTab('employees')" class="nav-link" v-bind:class="{'active bg-primary text-white': isLeftActive === 'employees'}">従業員数</a>
@@ -57,7 +57,7 @@
       </div>
       <div>
         <div>
-          <div class="bg-success text-white pl-2">従業員情報</div>
+          <div class="bg-success text-white pl-2">財務情報</div>
           <ul class="nav nav-tabs">
             <li class="nav-item">
               <a @click="selectRightTab('sales')" class="nav-link" v-bind:class="{'active bg-primary text-white': isRightActive === 'sales'}">売上</a>
@@ -117,6 +117,13 @@ export default {
     },
     selectRightTab: function(id) {
       this.isRightActive = id
+      axios.get('https://' + window.location.host + '/api/chart/get_client_' + this.isRightActive + '_chart_data', {params: {check_sn: this.checkSn, check_az: this.checkAz, check_dt: this.checkDt, check_ar: this.checkAr}})
+        .then(response=>{
+          console.log('status:', response.status)
+          console.log('responseData:', response.data)
+          this.setData(response.data)
+          this.$refs[this.tabToComponent[this.isRightActive]].plot()
+        })
     },
     executePlot: function() {
       this.selectLeftTab(this.isLeftActive)

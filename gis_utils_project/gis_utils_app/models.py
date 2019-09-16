@@ -33,19 +33,19 @@ class Client(models.Model):
     # 緯度
     latitude = models.DecimalField(max_digits=10, decimal_places=7, null=True)
     # 従業員数
-    employees = models.IntegerField(null=True)
+    employees = models.IntegerField(null=True, default=0)
     # 平均年齢
-    average_age = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    average_age = models.DecimalField(max_digits=5, decimal_places=2, null=True, default=0.0)
     # 平均勤続年数
-    service_years = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    service_years = models.DecimalField(max_digits=5, decimal_places=2, null=True, default=0.0)
     # 年収
-    income = models.IntegerField(null=True)
+    income = models.IntegerField(null=True, default=0)
     # 売上高
-    sales = models.IntegerField(null=True)
+    sales = models.IntegerField(null=True, default=0)
     # 経常利益
-    ordinary_income = models.IntegerField(null=True)
+    ordinary_income = models.IntegerField(null=True, default=0)
     # 当期純利益
-    net_income = models.IntegerField(null=True)
+    net_income = models.IntegerField(null=True, default=0)
     # 監査法人コード
     audit_code = models.CharField(max_length=2, blank=True)
 

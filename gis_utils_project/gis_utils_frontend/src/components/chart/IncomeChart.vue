@@ -42,7 +42,7 @@ export default {
                     display: true,
                     scaleLabel: {
                        display: true,
-                       labelString: '年収数'
+                       labelString: '年収'
                     }
                   }]
               }

@@ -66,6 +66,20 @@ class ScrapingAuditClientExecutor:
 
     #     print('クライアント情報更新の通知処理終了')
 
+    def adjust_scale(self, soup, target):
+        unit = re.sub('[()]','', soup.find(text=target).find_parent().find_parent().find_all('td')[1].text)
+
+        scale = ''
+        if unit == '千円':
+            scale ='000'
+        elif unit == '百万円':
+            scale = '000000'
+        elif unit == '億円':
+            scale = '00000000'
+        else:
+            pass
+        return re.sub('[^0-9]','', soup.find(text=target).find_parent().find_parent().find_all('td')[6].text) + scale
+
     def scraping_client_information(self):
         print('クライアント情報更新開始')
 
@@ -96,9 +110,9 @@ class ScrapingAuditClientExecutor:
                         re.sub('[^0-9\.]','', soup.find(text='平均年齢').find_parent().find_parent().find_all('dd')[1].text),
                         re.sub('[^0-9\.]','', soup.find(text='平均勤続年数').find_parent().find_parent().find_all('dd')[2].text),
                         re.sub('[^0-9]','', soup.find(text='年間給与').find_parent().find_parent().find_all('dd')[3].text),
-                        re.sub('[^0-9]','', soup.find(text='売上高').find_parent().find_parent().find_all('td')[6].text),
-                        re.sub('[^0-9]','', soup.find(text='経常利益又は経常損失（△）').find_parent().find_parent().find_all('td')[6].text),
-                        re.sub('[^0-9]','', soup.find(text='当期純利益又は当期純損失（△）').find_parent().find_parent().find_all('td')[6].text),
+                        self.adjust_scale(soup, '売上高'),
+                        self.adjust_scale(soup, '経常利益又は経常損失（△）'),
+                        self.adjust_scale(soup, '当期純利益又は当期純損失（△）'),
                         self.audit_code
                     )
                 except Exception as e:

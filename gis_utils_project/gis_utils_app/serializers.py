@@ -44,6 +44,19 @@ class ClientServiceYearsChartSerializer(serializers.ModelSerializer):
         model = Client
         fields = ('service_years', 'income', 'audit_code')
 
+class ClientOrdinaryIncomeChartSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Client
+        fields = ('ordinary_income', 'sales', 'audit_code')
+
+class ClientNetIncomeChartSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Client
+        fields = ('net_income', 'sales', 'audit_code')
+
+
 class SpotListSerializer(serializers.ModelSerializer):
     # 名前
     name = serializers.CharField(max_length=50)

@@ -4,8 +4,6 @@ from distutils.util import strtobool
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 
-
-
 from ..models import Client
 from ..serializers import ClientBarChartSerializer, ClientAverageAgeChartSerializer, ClientServiceYearsChartSerializer
 
@@ -85,44 +83,22 @@ class GetClientIncomeChartDataView(AbstractBarChartDataView):
             'count_section6': self.get_queryset(audit_code, 1300)
         }
 
-class AbstractScatterChartDataView(ListAPIView, metaclass=ABCMeta):
+class GetClientSalesChartDataView(AbstractBarChartDataView):
 
-    @abstractmethod
-    def queryset_exclude_of_child(self, queryset):
-        raise NotImplementedError()
-
-    def get_queryset(self):
-        if not bool(strtobool(self.request.query_params['check_sn'])) and \
-           not bool(strtobool(self.request.query_params['check_az'])) and \
-           not bool(strtobool(self.request.query_params['check_dt'])) and \
-           not bool(strtobool(self.request.query_params['check_ar'])):
-            return Client.objects.none()
-
+    def get_queryset(self, audit_code, under, over=None):
         queryset = Client.objects.all()
-        queryset = self.queryset_exclude_of_child(queryset)
-        queryset = queryset.exclude(income=0)
-        filter_element = []
-        if bool(strtobool(self.request.query_params['check_sn'])):
-            filter_element.append('sn')
-        if bool(strtobool(self.request.query_params['check_az'])):
-            filter_element.append('az')
-        if bool(strtobool(self.request.query_params['check_dt'])):
-            filter_element.append('dt')
-        if bool(strtobool(self.request.query_params['check_ar'])):
-            filter_element.append('ar')
-        if filter_element:
-            queryset = queryset.filter(audit_code__in=filter_element)
+        queryset = queryset.filter(audit_code=audit_code)
+        queryset = queryset.filter(sales__lt=over) if over else queryset
+        queryset = queryset.filter(sales__gte=under)
+        return len(queryset)
 
-        return queryset
-
-class GetClientAverageAgeChartDataView(AbstractScatterChartDataView):
-    serializer_class = ClientAverageAgeChartSerializer
-
-    def queryset_exclude_of_child(self, queryset):
-        return queryset.exclude(average_age=0.0)
-
-class GetClientServiceYearsChartDataView(AbstractScatterChartDataView):
-    serializer_class = ClientServiceYearsChartSerializer
-
-    def queryset_exclude_of_child(self, queryset):
-        return queryset.exclude(service_years=0.0)
+    def aggregate(self, audit_code):
+        return {
+            'audit_code': audit_code,
+            'count_section1': self.get_queryset(audit_code, 0, 10000000000),
+            'count_section2': self.get_queryset(audit_code, 10000000000, 30000000000),
+            'count_section3': self.get_queryset(audit_code, 30000000000, 100000000000),
+            'count_section4': self.get_queryset(audit_code, 100000000000, 300000000000),
+            'count_section5': self.get_queryset(audit_code, 300000000000, 1000000000000),
+            'count_section6': self.get_queryset(audit_code, 1000000000000)
+        }
