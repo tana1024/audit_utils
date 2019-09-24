@@ -26,6 +26,4 @@ RUN npm install -g http-server
 #RUN npm install --save-dev vue-chartjs chart.js
 #RUN npm install --save-dev vuex
 
-FROM gitpod/workspace-full
-USER gitpod
 RUN curl https://cli-assets.heroku.com/install.sh | sh
