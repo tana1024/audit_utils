@@ -1,1 +1,1 @@
-gunicorn gis-utils.wsgi --log-file -
+gunicorn gis_utils_project.wsgi --log-file -
