@@ -23,7 +23,6 @@ class AbstractScatterChartDataView(ListAPIView, metaclass=ABCMeta):
 
         queryset = Client.objects.all()
         queryset = self.queryset_exclude_of_child(queryset)
-        queryset = queryset.exclude(income=0)
         filter_element = []
         if bool(strtobool(self.request.query_params['check_sn'])):
             filter_element.append('sn')
@@ -54,10 +53,10 @@ class GetClientOrdinaryIncomeChartDataView(AbstractScatterChartDataView):
     serializer_class = ClientOrdinaryIncomeChartSerializer
 
     def queryset_exclude_of_child(self, queryset):
-        return queryset.exclude(sales=0).exclude(ordinary_income=0)
+        return queryset.exclude(sales=0).exclude(ordinary_income=0).exclude(sales__gte=500000000000).exclude(ordinary_income__gte=50000000000)
 
 class GetClientNetIncomeChartDataView(AbstractScatterChartDataView):
     serializer_class = ClientNetIncomeChartSerializer
 
     def queryset_exclude_of_child(self, queryset):
-        return queryset.exclude(sales=0).exclude(net_income=0)
+        return queryset.exclude(sales=0).exclude(net_income=0).exclude(sales__gte=500000000000).exclude(net_income__gte=50000000000)
