@@ -3,3 +3,4 @@ db.sqlite3
 db.sqlite3-journal
 gis_utils_frontend
 local_settings.py
+.gitpod.yml
