@@ -6,3 +6,4 @@ django-rest-framework
 django-webpack-loader
 gunicorn
 django-heroku
+dj-database-url
