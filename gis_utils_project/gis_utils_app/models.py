@@ -41,11 +41,11 @@ class Client(models.Model):
     # 年収
     income = models.IntegerField(null=True, default=0)
     # 売上高
-    sales = models.IntegerField(null=True, default=0)
+    sales = models.BigIntegerField(null=True, default=0)
     # 経常利益
-    ordinary_income = models.IntegerField(null=True, default=0)
+    ordinary_income = models.BigIntegerField(null=True, default=0)
     # 当期純利益
-    net_income = models.IntegerField(null=True, default=0)
+    net_income = models.BigIntegerField(null=True, default=0)
     # 監査法人コード
     audit_code = models.CharField(max_length=2, blank=True)
 
