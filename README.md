@@ -14,15 +14,15 @@ This application analyses client information of audit corporation
 
 ## Testing environment
 - gitpod
-- docker
+- docker(debian)
 - github
 - sqlite3
 
 ## Programming language, library, framework, tool, etc.
-- python
+- Python(bautifulsoup)
 - Django
-- DRF(Django rest framework)
-- vue
-- node.js
+- DRF(Django REST framework)
+- Vue(Vue Router, Vuex, BootstrapVue)
+- Node.js
 - webpack
-- bash
+- Bash
