@@ -9,4 +9,4 @@ tasks:
   - command:  export PATH=$PATH:/workspace/gis_utils/gis_utils_project
   - command:  git update-index --assume-unchanged .gitignore
   - command:  echo -n > .gitignore
-  - command:  python -m pip install dj-database-url
+  - command:  python -m pip install django-heroku
