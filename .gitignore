@@ -1,4 +1,6 @@
 __pycache__	
+data
+utility
 db.sqlite3	
 db.sqlite3-journal	
 gis_utils_frontend	
