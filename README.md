@@ -22,7 +22,7 @@ This application analyses client information of audit corporation
 - Python(bautifulsoup)
 - Django
 - DRF(Django REST framework)
-- Vue(Vue Router, Vuex, BootstrapVue)
+- Vue(Vue Router, Vuex, BootstrapVue, leaflet, vue-chartjs)
 - Node.js
 - webpack
 - Bash
