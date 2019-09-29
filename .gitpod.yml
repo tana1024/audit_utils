@@ -7,4 +7,4 @@ ports:
 
 tasks:
   - command:  export PATH=$PATH:/workspace/gis_utils/gis_utils_project
-  - command:  rm -f .gitignore
+  - command:  git rm .gitignore
