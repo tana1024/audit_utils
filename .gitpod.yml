@@ -8,4 +8,4 @@ ports:
 tasks:
   - command:  export PATH=$PATH:/workspace/gis_utils/gis_utils_project
   - command:  git update-index --assume-unchanged .gitignore
-  - command:  
+  - command:  echo -n > .gitignore
