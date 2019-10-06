@@ -6,3 +6,5 @@ django-rest-framework
 django-webpack-loader
 gunicorn
 django-heroku
+djangorestframework-simplejwt
+djoser
