@@ -33,7 +33,13 @@ export default {
   methods: {
     submitLogin: function() {
       this.$store.dispatch('authData/login', {username: this.username, password: this.password })
-      this.$router.push({path: 'portal'})
+      .then(() => {
+        console.log('Login succeeded.')
+        // クエリ文字列に「next」がなければ、ホーム画面へ
+        let isForceLoginPage = this.$route.query.next? true : false
+        isForceLoginPage? this.$router.replace(this.$route.query.next) : this.$router.push({path: 'portal'})
+      })
+
     }
   }
 }

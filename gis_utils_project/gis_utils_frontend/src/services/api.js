@@ -37,7 +37,7 @@ api.interceptors.response.use(function (response) {
   if (status === 400) {
     // バリデーションNG
     let messages = [].concat.apply([], Object.values(error.response.data))
-//    store.dispatch('message/setWarningMessages', { messages: messages })
+    store.dispatch('message/setWarningMessages', { messages: messages })
 
   } else if (status === 401) {
     // 認証エラー
@@ -48,17 +48,17 @@ api.interceptors.response.use(function (response) {
       message = '認証エラー'
     }
     store.dispatch('auth/logout')
-//    store.dispatch('message/setErrorMessage', { message: message })
+    store.dispatch('message/setErrorMessage', { message: message })
 
   } else if (status === 403) {
     // 権限エラー
     message = '権限エラーです。'
-//    store.dispatch('message/setErrorMessage', { message: message })
+    store.dispatch('message/setErrorMessage', { message: message })
 
   } else {
     // その他のエラー
     message = '想定外のエラーです。'
-//    store.dispatch('message/setErrorMessage', { message: message })
+    store.dispatch('message/setErrorMessage', { message: message })
   }
   return Promise.reject(error)
 })

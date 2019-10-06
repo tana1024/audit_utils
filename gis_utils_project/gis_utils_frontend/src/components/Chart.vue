@@ -42,16 +42,16 @@
         <!-- タブ内容 -->
         <div class="tab-content">
           <div class="tab-pane" v-show="isLeftActive === 'employees'" v-bind:class="{'active': isLeftActive === 'employees'}">
-            <router-view ref="EmployeesChart" name="EmployeesChart"/>
+            <EmployeesChart ref="EmployeesChart" />
           </div>
           <div class="tab-pane" v-show="isLeftActive === 'average_age'" v-bind:class="{'active': isLeftActive === 'average_age'}">
-            <router-view ref="AverageAgeChart" name="AverageAgeChart"/>
+            <AverageAgeChart ref="AverageAgeChart" />
           </div>
           <div class="tab-pane" v-show="isLeftActive === 'service_years'" v-bind:class="{'active': isLeftActive === 'service_years'}">
-            <router-view ref="ServiceYearsChart" name="ServiceYearsChart"/>
+            <ServiceYearsChart ref="ServiceYearsChart" />
           </div>
           <div class="tab-pane" v-show="isLeftActive === 'income'" v-bind:class="{'active': isLeftActive === 'income'}">
-            <router-view ref="IncomeChart" name="IncomeChart"/>
+            <IncomeChart ref="IncomeChart" />
           </div>
         </div>
       </div>
@@ -73,13 +73,13 @@
         <!-- タブ内容 -->
         <div class="tab-content">
           <div class="tab-pane" v-show="isRightActive === 'sales'" v-bind:class="{'active': isRightActive === 'sales'}">
-            <router-view ref="SalesChart" name="SalesChart"/>
+            <SalesChart ref="SalesChart" />
           </div>
           <div class="tab-pane" v-show="isRightActive === 'ordinary_income'" v-bind:class="{'active': isRightActive === 'ordinary_income'}">
-            <router-view ref="OrdinaryIncomeChart" name="OrdinaryIncomeChart"/>
+            <OrdinaryIncomeChart ref="OrdinaryIncomeChart" />
           </div>
           <div class="tab-pane" v-show="isRightActive === 'net_income'" v-bind:class="{'active': isRightActive === 'net_income'}">
-            <router-view ref="NetIncomeChart" name="NetIncomeChart"/>
+            <NetIncomeChart ref="NetIncomeChart"/>
           </div>
         </div>
       </div>
@@ -89,9 +89,20 @@
 <script>
 import axios from 'axios'
 import { mapMutations } from 'vuex'
+import EmployeesChart from '@/components/chart/EmployeesChart'
+import AverageAgeChart from '@/components/chart/AverageAgeChart'
+import ServiceYearsChart from '@/components/chart/ServiceYearsChart'
+import IncomeChart from '@/components/chart/IncomeChart'
+import SalesChart from '@/components/chart/SalesChart'
+import OrdinaryIncomeChart from '@/components/chart/OrdinaryIncomeChart'
+import NetIncomeChart from '@/components/chart/NetIncomeChart'
 
 export default {
   name: 'Chart',
+  components: {
+      EmployeesChart, AverageAgeChart, ServiceYearsChart, IncomeChart,
+      SalesChart, OrdinaryIncomeChart, NetIncomeChart
+  },
   data: function () {
     return {
       tabToComponent: {employees: 'EmployeesChart', average_age: 'AverageAgeChart', service_years: 'ServiceYearsChart', income: 'IncomeChart',

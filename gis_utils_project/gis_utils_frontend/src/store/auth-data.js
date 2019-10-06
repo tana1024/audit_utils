@@ -35,7 +35,7 @@ export const AuthData = {
       .then(response => {
         // 認証用トークンをlocalStorageに保存
         localStorage.setItem('access', response.data.access)
-        console.log('access: ' +  response.data.access)
+        console.log('access:', response.data.access)
         // ユーザー情報を取得してstoreのユーザー情報を更新
         return context.dispatch('reload')
           .then(user => user)
@@ -57,7 +57,7 @@ export const AuthData = {
           const user = response.data
           // storeのユーザー情報を更新
           context.commit('set', { user: user })
-          console.log('username: ' + user.username)
+          console.log('username:', user.username)
           return user
         })
     }
