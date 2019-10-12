@@ -1,15 +1,15 @@
 <template>
   <!-- メッセージエリア -->
   <div id="global-message">
-    <b-alert variant="danger" show v-show="message.error" class="mb-0">
-      {{ message.error }}
+    <b-alert variant="danger" dismissible v-model="showError" show v-show="messageError" class="mb-0">
+      {{ messageError }}
     </b-alert>
     <b-alert
-      variant="warning" show v-show="message.warnings.length > 0" class="mb-0">
-      <p v-for="warning in message.warnings" class="mb-0">{{ warning }}</p>
+      variant="warning" dismissible v-model="showWarnings" show v-show="messageWarnings.length > 0" class="mb-0">
+      <p v-for="warning in messageWarnings" class="mb-0">{{ warning }}</p>
     </b-alert>
-    <b-alert variant="info" show v-show="message.info" class="mb-0">
-      {{ message.info }}
+    <b-alert variant="info" dismissible v-model="showInfo" show v-show="messageInfo" class="mb-0">
+      {{ messageInfo }}
     </b-alert>
   </div>
 </template>
@@ -17,9 +17,25 @@
 <script>
 export default {
   name: 'GlobalMessage',
+  data() {
+    return {
+      showError: true,
+      showWarnings: true,
+      showInfo: true
+    }
+  },
   computed: {
-    message: function () {
-      return this.$store.state.messageData
+    messageError: function () {
+      this.showError = true
+      return this.$store.state.messageData.error
+    },
+    messageWarnings: function() {
+      this.showWarnings = true
+      return this.$store.state.messageData.warnings
+    },
+    MessageInfo: function() {
+      this.showInfo = true
+      return this.$store.state.messageData.info
     }
   }
 }

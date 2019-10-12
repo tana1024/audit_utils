@@ -2,7 +2,7 @@
 export const MessageData = {
   namespaced: true,
   state: {
-    error: 'エラー',
+    error: '',
     warnings: [],
     info: ''
   },

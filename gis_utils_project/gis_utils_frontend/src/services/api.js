@@ -13,7 +13,7 @@ const api = axios.create({
 // 共通前処理
 api.interceptors.request.use(function (config) {
   // メッセージをクリア
-//  store.dispatch('message/clearMessages')
+  store.dispatch('messageData/clearMessages')
   // 認証用トークンがあればリクエストヘッダに乗せる
   const token = localStorage.getItem('access')
   if (token) {
@@ -37,7 +37,7 @@ api.interceptors.response.use(function (response) {
   if (status === 400) {
     // バリデーションNG
     let messages = [].concat.apply([], Object.values(error.response.data))
-    store.dispatch('message/setWarningMessages', { messages: messages })
+    store.dispatch('messageData/setWarningMessages', { messages: messages })
 
   } else if (status === 401) {
     // 認証エラー
@@ -47,18 +47,19 @@ api.interceptors.response.use(function (response) {
     } else {
       message = '認証エラー'
     }
-    store.dispatch('auth/logout')
-    store.dispatch('message/setErrorMessage', { message: message })
+    store.dispatch('authData/logout')
+    store.dispatch('messageData/setWarningMessages', { messages: ['aaa', 'bbb', 'cccc'] })
+    store.dispatch('messageData/setErrorMessage', { message: message })
 
   } else if (status === 403) {
     // 権限エラー
-    message = '権限エラーです。'
-    store.dispatch('message/setErrorMessage', { message: message })
+    message = '権限エラー'
+    store.dispatch('messageData/setErrorMessage', { message: message })
 
   } else {
     // その他のエラー
-    message = '想定外のエラーです。'
-    store.dispatch('message/setErrorMessage', { message: message })
+    message = '想定外エラー'
+    store.dispatch('messageData/setErrorMessage', { message: message })
   }
   return Promise.reject(error)
 })
