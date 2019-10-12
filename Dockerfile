@@ -20,8 +20,8 @@ RUN npm install -g http-server
 #RUN npm install webpack-bundle-tracker --save-dev
 #RUN npm install write-file-webpack-plugin --save-dev
 #RUN npm install --save-dev node-sass sass-loader
-#RUN npm install --save-dev vue-router
-#RUN npm install --save-dev axios
-#RUN npm install --save-dev leaflet-sprite
-#RUN npm install --save-dev vue-chartjs chart.js
-#RUN npm install --save-dev vuex
+#RUN npm install --save vue-router
+#RUN npm install --save axios
+#RUN npm install --save leaflet-sprite
+#RUN npm install --save vue-chartjs chart.js
+#RUN npm install --save vuex

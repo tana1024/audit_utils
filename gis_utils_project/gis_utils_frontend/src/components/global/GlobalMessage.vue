@@ -33,7 +33,7 @@ export default {
       this.showWarnings = true
       return this.$store.state.messageData.warnings
     },
-    MessageInfo: function() {
+    messageInfo: function() {
       this.showInfo = true
       return this.$store.state.messageData.info
     }

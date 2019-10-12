@@ -12,16 +12,14 @@ export const MessageData = {
     info: state => state.info
   },
   mutations: {
-    set (state, payload) {
-      if (payload.error) {
-        state.error = payload.error
-      }
-      if (payload.warnings) {
-        state.warnings = payload.warnings
-      }
-      if (payload.info) {
-        state.info = payload.info
-      }
+    setStateErrorMessage (state, payload) {
+      state.error = payload.error
+    },
+    setStateWarningsMessage (state, payload) {
+      state.warnings = payload.warnings
+    },
+    setStateInfoMessage (state, payload) {
+      state.info = payload.info
     },
     clear (state) {
       state.error = ''
@@ -32,18 +30,15 @@ export const MessageData = {
   actions: {
     // エラーメッセージ表示
     setErrorMessage (context, payload) {
-      context.commit('clear')
-      context.commit('set', { 'error': payload.message })
+      context.commit('setStateErrorMessage', { 'error': payload.message })
     },
     // 警告メッセージ（複数）表示
     setWarningMessages (context, payload) {
-      context.commit('clear')
-      context.commit('set', { 'warnings': payload.messages })
+      context.commit('setStateWarningsMessage', { 'warnings': payload.messages })
     },
     // インフォメーションメッセージ表示
     setInfoMessage (context, payload) {
-      context.commit('clear')
-      context.commit('set', { 'info': payload.message })
+      context.commit('setStateInfoMessage', { 'info': payload.message })
     },
     // 全メッセージ削除
     clearMessages (context) {

@@ -48,7 +48,6 @@ api.interceptors.response.use(function (response) {
       message = '認証エラー'
     }
     store.dispatch('authData/logout')
-    store.dispatch('messageData/setWarningMessages', { messages: ['aaa', 'bbb', 'cccc'] })
     store.dispatch('messageData/setErrorMessage', { message: message })
 
   } else if (status === 403) {
