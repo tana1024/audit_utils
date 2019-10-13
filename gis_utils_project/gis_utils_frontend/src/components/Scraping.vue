@@ -1,6 +1,12 @@
 <template>
   <div>
+    <b-modal id="modal-confirm" title="確認" @ok="execScraping">
+      <p>クライアント情報を更新してもよろしいでしょうか？</p>
+    </b-modal>
     <h3>Scraping（クライアント情報スクレイピング）</h3>
+    <div class="container-fluid">
+      <GlobalMessage/>
+    </div>
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
@@ -17,40 +23,45 @@
                 <td>{{snUpdateDatetime}}</td>
                 <td>{{snUpdateStatus}}</td>
                 <td>{{snUpdateCount}}</td>
-                <td><button class="btn btn-sm btn-primary" @click="execScraping('sn')">更新</button></td>
+                <td><button class="btn btn-sm btn-primary" @click="showModal('sn')">更新</button></td>
             </tr>
             <tr>
                 <th>あずさ</th>
                 <td>{{azUpdateDatetime}}</td>
                 <td>{{azUpdateStatus}}</td>
                 <td>{{azUpdateCount}}</td>
-                <td><button class="btn btn-sm btn-primary" @click="execScraping('az')">更新</button></td>
+                <td><button class="btn btn-sm btn-primary" @click="showModal('az')">更新</button></td>
             </tr>
             <tr>
                 <th>トーマツ</th>
                 <td>{{dtUpdateDatetime}}</td>
                 <td>{{dtUpdateStatus}}</td>
                 <td>{{dtUpdateCount}}</td>
-                <td><button class="btn btn-sm btn-primary" @click="execScraping('dt')">更新</button></td>
+                <td><button class="btn btn-sm btn-primary" @click="showModal('dt')">更新</button></td>
             </tr>
             <tr>
                 <th>あらた</th>
                 <td>{{arUpdateDatetime}}</td>
                 <td>{{arUpdateStatus}}</td>
                 <td>{{arUpdateCount}}</td>
-                <td><button class="btn btn-sm btn-primary" @click="execScraping('ar')">更新</button></td>
+                <td><button class="btn btn-sm btn-primary" @click="showModal('ar')">更新</button></td>
             </tr>
         </tbody>
     </table>
   </div>
 </template>
 <script>
-import axios from 'axios'
+import GlobalMessage from '@/components/global/GlobalMessage'
+import api from '@/services/api'
 
 export default {
   name: 'Scraping',
+  components: {
+    GlobalMessage
+  },
   data: function () {
     return {
+      scraping_audit_code: '',
       snUpdateDatetime:'-',
       snUpdateStatus:'-',
       snUpdateCount:'-',
@@ -66,7 +77,7 @@ export default {
     }
   },
   created () {
-      axios.get('https://' + window.location.host + '/api/scraping/init_scraping')
+      api.get('/api/scraping/init_scraping')
         .then(response=>{
           console.log('status:', response.status)
           console.log('responseData:', response.data)
@@ -106,15 +117,16 @@ export default {
         })
   },
   methods: {
-    execScraping: function(audit_code) {
-      if (!confirm('クライアント情報を更新してもよろしいでしょうか？')) {
-        return
-      }
-      axios.get('https://' + window.location.host + '/api/scraping/exec_scraping', {params: {audit_code: audit_code}})
+    showModal: function(audit_code) {
+      this.scraping_audit_code = audit_code
+      this.$bvModal.show('modal-confirm')
+    },
+    execScraping: function() {
+      api.get('/api/scraping/exec_scraping', {params: {audit_code: this.scraping_audit_code}})
         .then(response=>{
           console.log('status:',response.status)
           console.log('responseData:',response.data)
-          alert('更新リクエストを受け付けました。\n更新完了の通知ををメールでご連絡いたします。')
+          this.$store.dispatch('messageData/setInfoMessage', { message: '更新リクエストを受け付けました。\n更新完了の通知ををメールでご連絡いたします。'})
         })
     }
   }

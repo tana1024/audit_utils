@@ -26,6 +26,8 @@ router = routers.DefaultRouter()
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/auth/', include('djoser.urls')),
+    path('api/auth/', include('djoser.urls.jwt')),
     path('api/', include(router.urls)),
     path('api/', include(urls, namespace='gis_utils_app')),
     path('', TemplateView.as_view(template_name='index.html'), name='base')

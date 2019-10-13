@@ -1,19 +1,47 @@
 <template>
-  <div id="login">
-    <form class="form-signin">
-      <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-      <label for="inputEmail" class="sr-only">Email address</label>
-      <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
-      <label for="inputPassword" class="sr-only">Password</label>
-      <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
-      <router-link to="/portal"  class="btn btn-lg btn-primary btn-block" tag="button">Sign in</router-link>
-    </form>
+  <div id="login" class="d-flex flex-column">
+    <div class="container-fluid">
+      <GlobalMessage/>
+    </div>
+    <div class="container-fluid my-auto">
+        <b-form class="form-signin" @submit.prevent="submitLogin">
+        <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+            <b-form-input type="text" id="inputUsername" placeholder="Username" v-model="username" required autofocus>
+            </b-form-input>
+            <b-form-input type="password" id="inputPassword" placeholder="Password" v-model="password" required>
+            </b-form-input>
+        <b-button type="submit" variant="primary" class="btn-lg btn-block">Sign in</b-button>
+        </b-form>
+    </div>
   </div>
 </template>
 
 <script>
+import GlobalMessage from '@/components/global/GlobalMessage'
+
 export default {
-  name: 'Login'
+  name: 'Login',
+  components: {
+    GlobalMessage
+  },
+  data: function() {
+    return {
+      username: '',
+      password: ''
+    }
+  },
+  methods: {
+    submitLogin: function() {
+      this.$store.dispatch('authData/login', {username: this.username, password: this.password })
+      .then(() => {
+        console.log('Login succeeded.')
+        // クエリ文字列に「next」がなければ、ホーム画面へ
+        let isForceLoginPage = this.$route.query.next? true : false
+        isForceLoginPage? this.$router.replace(this.$route.query.next) : this.$router.push({path: 'portal'})
+      })
+
+    }
+  }
 }
 </script>
 
@@ -24,11 +52,8 @@ export default {
 
   #login {
     min-height: 100vh;
-    display: -ms-flexbox;
-    display: flex;
     -ms-flex-align: center;
     align-items: center;
-    padding-top: 40px;
     padding-bottom: 40px;
     background-color: #f5f5f5;
   }

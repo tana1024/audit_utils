@@ -8,20 +8,15 @@ import Information from '@/components/Information'
 import Scraping from '@/components/Scraping'
 import Map from '@/components/Map'
 import Chart from '@/components/Chart'
-import EmployeesChart from '@/components/chart/EmployeesChart'
-import AverageAgeChart from '@/components/chart/AverageAgeChart'
-import ServiceYearsChart from '@/components/chart/ServiceYearsChart'
-import IncomeChart from '@/components/chart/IncomeChart'
-import SalesChart from '@/components/chart/SalesChart'
-import OrdinaryIncomeChart from '@/components/chart/OrdinaryIncomeChart'
-import NetIncomeChart from '@/components/chart/NetIncomeChart'
+import store from '@/store/store'
 
 Vue.use(Router)
+Vue.use(BootstrapVue)
 
 import 'bootstrap/dist/css/bootstrap.css' // added
 import 'bootstrap-vue/dist/bootstrap-vue.css' // added
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/',
@@ -35,6 +30,7 @@ export default new Router({
     },
     {
       path: '/portal',
+      meta: { requiresAuth: true },
       component: Portal,
       children: [
         {
@@ -59,24 +55,70 @@ export default new Router({
         },
         {
           path: 'chart',
-          component: Chart,
-          children: [
-            {
-              path: '',
-              name: 'Chart',
-              components: {
-                'EmployeesChart': EmployeesChart,
-                'AverageAgeChart': AverageAgeChart,
-                'ServiceYearsChart': ServiceYearsChart,
-                'IncomeChart': IncomeChart,
-                'SalesChart': SalesChart,
-                'OrdinaryIncomeChart': OrdinaryIncomeChart,
-                'NetIncomeChart': NetIncomeChart
-              }
-            }
-          ]
+          name: 'Chart',
+          component: Chart
         }
       ]
     }
   ]
 })
+
+/**
+ * Routerによって画面遷移する際に毎回実行される
+ */
+router.beforeEach((to, from, next) => {
+
+  const isLoggedIn = store.getters['authData/isLoggedIn']
+  const token = localStorage.getItem('access')
+  console.log('to.path=', to.path)
+  console.log('isLoggedIn=', isLoggedIn)
+
+  // ログインが必要な画面に遷移しようとした場合
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+
+    // ログインしている状態の場合
+    if (isLoggedIn) {
+      console.log('User is already logged in. So, free to next.')
+      next()
+
+      // ログインしていない状態の場合
+    } else {
+      // まだ認証用トークンが残っていればユーザー情報を再取得
+      if (token != null) {
+        console.log('User is not logged in. Trying to reload again.')
+
+        store.dispatch('authData/reload')
+          .then(() => {
+            // 再取得できたらそのまま次へ
+            console.log('Succeeded to reload. So, free to next.')
+            next()
+          })
+          .catch(() => {
+            // 再取得できなければログイン画面へ
+            forceToLoginPage(to, from, next)
+          })
+      } else {
+        // 認証用トークンが無い場合は、ログイン画面へ
+        forceToLoginPage(to, from, next)
+      }
+    }
+  } else {
+    // ログインが不要な画面であればそのまま次へ
+    console.log('Go to public page.')
+    next()
+  }
+})
+
+/**
+ * ログイン画面へ強制送還
+ */
+function forceToLoginPage (to, from, next) {
+  console.log('Force user to login page.')
+  next({
+    path: '/login',
+    // 遷移先のURLはクエリ文字列として付加
+    query: { next: to.fullPath }
+  })
+}
+
+export default router

@@ -31,7 +31,7 @@
 <script>
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
-import axios from 'axios'
+import api from '@/services/api'
 require('leaflet-sprite/dist/leaflet.sprite.js')
 
 delete  L.Icon.Default.prototype._getIconUrl
@@ -62,7 +62,7 @@ export default {
   },
   methods: {
     executeMapping: function() {
-      axios.get('/api/map/get_client_gio_info', {params: {check_sn: this.checkSn, check_az: this.checkAz, check_dt: this.checkDt, check_ar: this.checkAr}})
+      api.get('/api/map/get_client_gio_info', {params: {check_sn: this.checkSn, check_az: this.checkAz, check_dt: this.checkDt, check_ar: this.checkAr}})
         .then(response=>{
           console.log('status:', response.status)
           console.log('responseData:', response.data)
