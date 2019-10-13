@@ -87,7 +87,7 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
+import api from '@/services/api'
 import { mapMutations } from 'vuex'
 import EmployeesChart from '@/components/chart/EmployeesChart'
 import AverageAgeChart from '@/components/chart/AverageAgeChart'
@@ -118,7 +118,7 @@ export default {
   methods: {
     selectLeftTab: function(id) {
       this.isLeftActive = id
-      axios.get('https://' + window.location.host + '/api/chart/get_client_' + this.isLeftActive + '_chart_data', {params: {check_sn: this.checkSn, check_az: this.checkAz, check_dt: this.checkDt, check_ar: this.checkAr}})
+      api.get('/api/chart/get_client_' + this.isLeftActive + '_chart_data', {params: {check_sn: this.checkSn, check_az: this.checkAz, check_dt: this.checkDt, check_ar: this.checkAr}})
         .then(response=>{
           console.log('status:', response.status)
           console.log('responseData:', response.data)
@@ -128,7 +128,7 @@ export default {
     },
     selectRightTab: function(id) {
       this.isRightActive = id
-      axios.get('https://' + window.location.host + '/api/chart/get_client_' + this.isRightActive + '_chart_data', {params: {check_sn: this.checkSn, check_az: this.checkAz, check_dt: this.checkDt, check_ar: this.checkAr}})
+      api.get('/api/chart/get_client_' + this.isRightActive + '_chart_data', {params: {check_sn: this.checkSn, check_az: this.checkAz, check_dt: this.checkDt, check_ar: this.checkAr}})
         .then(response=>{
           console.log('status:', response.status)
           console.log('responseData:', response.data)

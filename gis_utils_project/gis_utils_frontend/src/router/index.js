@@ -26,11 +26,11 @@ const router = new Router({
     {
       path: '/login',
       name: 'Login',
-      meta: { requiresAuth: true },
       component: Login
     },
     {
       path: '/portal',
+      meta: { requiresAuth: true },
       component: Portal,
       children: [
         {
@@ -87,7 +87,7 @@ router.beforeEach((to, from, next) => {
       if (token != null) {
         console.log('User is not logged in. Trying to reload again.')
 
-        store.dispatch('auth/reload')
+        store.dispatch('authData/reload')
           .then(() => {
             // 再取得できたらそのまま次へ
             console.log('Succeeded to reload. So, free to next.')

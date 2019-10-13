@@ -51,8 +51,8 @@
   </div>
 </template>
 <script>
-import axios from 'axios'
 import GlobalMessage from '@/components/global/GlobalMessage'
+import api from '@/services/api'
 
 export default {
   name: 'Scraping',
@@ -77,7 +77,7 @@ export default {
     }
   },
   created () {
-      axios.get('https://' + window.location.host + '/api/scraping/init_scraping')
+      api.get('/api/scraping/init_scraping')
         .then(response=>{
           console.log('status:', response.status)
           console.log('responseData:', response.data)
@@ -122,13 +122,12 @@ export default {
       this.$bvModal.show('modal-confirm')
     },
     execScraping: function() {
-      this.$store.dispatch('messageData/setInfoMessage', { message: '更新リクエストを受け付けました。\n更新完了の通知ををメールでご連絡いたします。'})
-      // axios.get('https://' + window.location.host + '/api/scraping/exec_scraping', {params: {audit_code: this.scraping_audit_code}})
-      //   .then(response=>{
-      //     console.log('status:',response.status)
-      //     console.log('responseData:',response.data)
-      //     $store.dispatch('messageData/setInfoMessage', { message: '更新リクエストを受け付けました。\n更新完了の通知ををメールでご連絡いたします。'})
-      //   })
+      api.get('/api/scraping/exec_scraping', {params: {audit_code: this.scraping_audit_code}})
+        .then(response=>{
+          console.log('status:',response.status)
+          console.log('responseData:',response.data)
+          this.$store.dispatch('messageData/setInfoMessage', { message: '更新リクエストを受け付けました。\n更新完了の通知ををメールでご連絡いたします。'})
+        })
     }
   }
 }
