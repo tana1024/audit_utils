@@ -2,7 +2,7 @@
 This application analyses client information of audit corporation
 
 # Function
-- Log in using Gmail
+- Authenticate using jwt
 - Collect client information by scraping from the web
 - Show client address on map
 - Analyse client employee and financial information
@@ -19,10 +19,10 @@ This application analyses client information of audit corporation
 - sqlite3
 
 ## Programming language, library, framework, tool, etc.
-- Python(bautifulsoup)
-- Django
-- DRF(Django REST framework)
+- Python(bautifulsoup, sqlalchemy)
+- Django(DRF, djoser)
 - Vue(Vue Router, Vuex, BootstrapVue, leaflet, vue-chartjs)
+- jwt
 - Node.js
 - webpack
 - Bash
