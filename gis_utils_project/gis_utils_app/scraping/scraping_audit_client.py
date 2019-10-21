@@ -40,7 +40,10 @@ class ScrapingAuditClientExecutor:
         }
     }
     GEOCODING_API_URL = 'https://www.geocoding.jp/api/'
-    PAGE_LIMIT = 1
+    PAGE_LIMIT = 5
+    STATUS_PROGRESS = '1'
+    STATUS_COMPLETE = '2'
+
     message = "%sのクライアント情報の更新が完了しました。\n" + \
               "更新件数: %d"
     audit_code = 'sn'  # default value is 'sn'
@@ -52,7 +55,7 @@ class ScrapingAuditClientExecutor:
     def pre_scraping(self):
         table = base.classes.gis_utils_app_clientupdatestatus
         self.session.query(table).filter(table.audit_code==self.audit_code).delete()
-        self.session.add(table(audit_code=self.audit_code, status='1', update_count=None, update_datetime=datetime.now(timezone('UTC'))))
+        self.session.add(table(audit_code=self.audit_code, status=self.STATUS_PROGRESS, update_count=None, update_datetime=datetime.now(timezone('UTC'))))
         table = base.classes.gis_utils_app_client
         self.session.query(table).filter(table.audit_code==self.audit_code).delete()
 
@@ -61,23 +64,23 @@ class ScrapingAuditClientExecutor:
 
         table = base.classes.gis_utils_app_clientupdatestatus
         model = self.session.query(table).filter(table.audit_code==self.audit_code).first()
-        model.status = '2'
+        model.status = self.STATUS_COMPLETE
         model.update_count = self.count
         model.update_datetime = datetime.now(timezone('UTC'))
 
-    #     # MIMEの作成
-    #     subject = "クライアント情報更新の完了通知"
-    #     self.message = self.message % (self.AUDIT_CODE_DICT[self.audit_code]['name'], self.count)
-    #     msg = MIMEText(self.message, 'plain')
-    #     msg["Subject"] = subject
-    #     msg["To"] = 'XXXXXXXXX@XXXXX.XXX'  # 値を設定すること
-    #     msg["From"] = 'XXXXXXXXX@XXXXX.XXX'  # 値を設定すること
+        # MIMEの作成
+        subject = "クライアント情報更新の完了通知"
+        self.message = self.message % (self.AUDIT_CODE_DICT[self.audit_code]['name'], self.count)
+        msg = MIMEText(self.message, 'plain')
+        msg["Subject"] = subject
+        msg["To"] = 'gisutilsdev1@cock.li'  # 値を設定すること
+        msg["From"] = 'gisutilsdev3@cock.li'  # 値を設定すること
 
-    #     server = smtplib.SMTP('smtp.XXXXX.XXX', 587)  # 値を設定すること
-    #     server.starttls()
-    #     server.login('XXXXXXXXX@XXXXX.XXX', 'XXXXXXXXXXX')  # 値を設定すること
-    #     server.send_message(msg)
-    #     server.quit()
+        server = smtplib.SMTP('mail.cock.li', 587)  # 値を設定すること
+        server.starttls()
+        server.login('gisutilsdev3@cock.li', 'odxf7lgm')  # 値を設定すること
+        server.send_message(msg)
+        server.quit()
 
     #     print('クライアント情報更新の通知処理終了')
 
