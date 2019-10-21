@@ -1,3 +1,5 @@
+import os
+import sys
 import time
 import requests
 import re
@@ -6,10 +8,15 @@ import argparse
 import smtplib
 import xml.etree.ElementTree as etree
 from decimal import Decimal
+from datetime import datetime
+from pytz import timezone
 from bs4 import BeautifulSoup
 from contextlib import closing
 from email.mime.text import MIMEText
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm  import sessionmaker, scoped_session
+from sqlalchemy.ext.automap import automap_base
 
 class ScrapingAuditClientExecutor:
 
@@ -33,22 +40,30 @@ class ScrapingAuditClientExecutor:
         }
     }
     GEOCODING_API_URL = 'https://www.geocoding.jp/api/'
-    PAGE_LIMIT = 5
-    STATUS_IN_PROGRESS = '1'
+    PAGE_LIMIT = 1
     message = "%sのクライアント情報の更新が完了しました。\n" + \
               "更新件数: %d"
     audit_code = 'sn'  # default value is 'sn'
     count = 0
-    cursor = None
+    base = None
+    session = None
+
 
     def pre_scraping(self):
-        self.cursor.execute("replace into gis_utils_app_clientupdatestatus (audit_code, status, update_count, update_datetime) values (?,'1', null, current_timestamp )", (self.audit_code,) )
-        self.cursor.execute("delete from gis_utils_app_client where audit_code = ?", (self.audit_code,) )
+        table = base.classes.gis_utils_app_clientupdatestatus
+        self.session.query(table).filter(table.audit_code==self.audit_code).delete()
+        self.session.add(table(audit_code=self.audit_code, status='1', update_count=None, update_datetime=datetime.now(timezone('UTC'))))
+        table = base.classes.gis_utils_app_client
+        self.session.query(table).filter(table.audit_code==self.audit_code).delete()
 
     def post_scraping(self):
         print('クライアント情報更新の通知処理開始')
 
-        self.cursor.execute("update gis_utils_app_clientupdatestatus set status = '2', update_count = ?, update_datetime = current_timestamp where audit_code = ?", (self.count, self.audit_code,))
+        table = base.classes.gis_utils_app_clientupdatestatus
+        model = self.session.query(table).filter(table.audit_code==self.audit_code).first()
+        model.status = '2'
+        model.update_count = self.count
+        model.update_datetime = datetime.now(timezone('UTC'))
 
     #     # MIMEの作成
     #     subject = "クライアント情報更新の完了通知"
@@ -102,18 +117,22 @@ class ScrapingAuditClientExecutor:
 
                 soup = BeautifulSoup(response.content, "html.parser")
                 try :
-                    model = (
-                        soup.find('h2').contents[0].strip().split(' ')[0],
-                        soup.find('h2').contents[0].strip().split(' ')[1].replace('\u3000', ' '),
-                        soup.find(id='address2').find('a').contents[0].strip()[9:],
-                        re.sub('[^0-9]','', soup.find(text='従業員数').find_parent().find_parent().find_all('dd')[0].text),
-                        re.sub('[^0-9\.]','', soup.find(text='平均年齢').find_parent().find_parent().find_all('dd')[1].text),
-                        re.sub('[^0-9\.]','', soup.find(text='平均勤続年数').find_parent().find_parent().find_all('dd')[2].text),
-                        re.sub('[^0-9]','', soup.find(text='年間給与').find_parent().find_parent().find_all('dd')[3].text),
-                        self.adjust_scale(soup, '売上高'),
-                        self.adjust_scale(soup, '経常利益又は経常損失（△）'),
-                        self.adjust_scale(soup, '当期純利益又は当期純損失（△）'),
-                        self.audit_code
+
+                    table = base.classes.gis_utils_app_client
+                    model = table(
+                        s_code = soup.find('h2').contents[0].strip().split(' ')[0],
+                        name = soup.find('h2').contents[0].strip().split(' ')[1].replace('\u3000', ' '),
+                        street_address = soup.find(id='address2').find('a').contents[0].strip()[9:],
+                        longitude = None,
+                        latitude = None,
+                        employees = re.sub(r'[^0-9]','', soup.find(text='従業員数').find_parent().find_parent().find_all('dd')[0].text),
+                        average_age = self.cast_decimal(re.sub(r'[^0-9\.]','', soup.find(text='平均年齢').find_parent().find_parent().find_all('dd')[1].text), "Decimal"),
+                        service_years = self.cast_decimal(re.sub(r'[^0-9\.]','', soup.find(text='平均勤続年数').find_parent().find_parent().find_all('dd')[2].text), "Decimal"),
+                        income = re.sub(r'[^0-9]','', soup.find(text='年間給与').find_parent().find_parent().find_all('dd')[3].text),
+                        sales = self.adjust_scale(soup, '売上高'),
+                        ordinary_income = self.adjust_scale(soup, '経常利益又は経常損失（△）'),
+                        net_income = self.adjust_scale(soup, '当期純利益又は当期純損失（△）'),
+                        audit_code = self.audit_code
                     )
                 except Exception as e:
                     print('スクレイピングエラー count:%d' % self.count)
@@ -121,39 +140,48 @@ class ScrapingAuditClientExecutor:
                     continue
 
                 models.append(model)
-                print(model)
+                self.print_model_client(model)
                 self.count = self.count + 1
                 time.sleep(3)
 
-            self.insert(models)
+            self.session.add_all(models)
+            self.session.commit()
 
         print('クライアント情報更新完了')
 
-    def request_geocoding(self):
+    def cast_decimal(self, value, ctype):
+        if not value:
+            return None
+        if (ctype == "Decimal"):
+            return Decimal(value)
+        else:
+            return None
 
-        select_sql = "select s_code, street_address from gis_utils_app_client where audit_code = '%s' limit 2000" % (self.audit_code)
-        cursor.execute(select_sql)
-        rows = cursor.fetchall()
-        for row in rows:
-            response = requests.get(url=self.GEOCODING_API_URL, params={'q': row['street_address']})
+    def print_model_client(self, model):
+        print(model.s_code, model.name, model.street_address, model.longitude, model.latitude, model.employees, model.average_age, model.service_years, model.income, model.sales, model.ordinary_income, model.net_income, model.audit_code)
+
+    def request_geocoding(self):
+        print('geocoding情報更新開始')
+
+        table = base.classes.gis_utils_app_client
+        models = self.session.query(table).filter(table.audit_code==self.audit_code).all()
+        for model in models:
+            response = requests.get(url=self.GEOCODING_API_URL, params={'q': model.street_address})
             data = etree.fromstring(response.text)
             print(response.text)
             if data.find('error') is not None:
                 continue
             lng = data.find('coordinate').find('lng').text
             lat = data.find('coordinate').find('lat').text
-            update_sql = 'update gis_utils_app_client set longitude = ?, latitude = ? where s_code = ?'
-            cursor.execute(update_sql, (lng, lat, row['s_code']))
-            print('s_code: %s, longitude: %s, latitude: %s' % (row['s_code'], lng, lat))
+            model.longitude = lng
+            model.latitude = lat
+            print('s_code: %s, longitude: %s, latitude: %s' % (model.s_code, lng, lat))
             time.sleep(10)
         print('geocoding情報更新完了')
 
-    def insert(self, models):
-        insert_sql = "replace into gis_utils_app_client (s_code, name, street_address, longitude, latitude, employees, average_age, service_years, income, sales, ordinary_income, net_income, audit_code) values (?,?,?,null,null,?,?,?,?,?,?,?,?)"
-        cursor.executemany(insert_sql, models)
-
-    def __init__(self, cursor, audit_code):
-        self.cursor = cursor
+    def __init__(self, base, session, audit_code):
+        self.base = base
+        self.session = session
         self.audit_code = audit_code
 
 
@@ -163,16 +191,34 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    with closing(sqlite3.connect('/workspace/gis_utils/gis_utils_project/db.sqlite3')) as conn:
-        conn.row_factory = sqlite3.Row
-        # pylint: disable=E1101
-        cursor = conn.cursor()
-        exec = ScrapingAuditClientExecutor(cursor, args.audit_code)
-        exec.pre_scraping()
-        exec.scraping_client_information()
-        exec.request_geocoding()
-        exec.post_scraping()
+    database_url = 'sqlite:///db.sqlite3'
+    if 'DATABASE_URL' in os.environ:
+        database_url = os.environ.get('DATABASE_URL', None)
 
-        conn.commit()
-        conn.close()
+    base = automap_base()
+    engine = create_engine(
+        database_url,
+        encoding = "utf-8",
+        echo=True # Trueだと実行のたびにSQLが出力される
+    )
+    base.prepare(engine, reflect=True)
+
+    # Sessionの作成
+    session = scoped_session(
+        # ORM実行時の設定。自動コミットするか、自動反映するなど。
+        sessionmaker(
+            autocommit = False,
+            autoflush = False,
+            bind = engine
+        )
+    )
+
+    exec = ScrapingAuditClientExecutor(base, session, args.audit_code)
+    exec.pre_scraping()
+    exec.scraping_client_information()
+    exec.request_geocoding()
+    exec.post_scraping()
+    # pylint: disable=E1101
+    session.commit()
+    session.close()
 

@@ -8,3 +8,6 @@ gunicorn
 django-heroku
 djangorestframework-simplejwt
 djoser
+pylint
+sqlalchemy
+pytz
