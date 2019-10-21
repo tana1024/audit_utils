@@ -148,7 +148,6 @@ class ScrapingAuditClientExecutor:
                 time.sleep(3)
 
             self.session.add_all(models)
-            self.session.commit()
 
         print('クライアント情報更新完了')
 
@@ -219,9 +218,10 @@ if __name__ == '__main__':
     exec = ScrapingAuditClientExecutor(base, session, args.audit_code)
     exec.pre_scraping()
     exec.scraping_client_information()
+    # pylint: disable=E1101
+    session.commit()
     exec.request_geocoding()
     exec.post_scraping()
-    # pylint: disable=E1101
     session.commit()
     session.close()
 

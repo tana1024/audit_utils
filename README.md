@@ -4,6 +4,7 @@ This application analyses client information of audit corporation
 # Function
 - Authenticate using jwt
 - Collect client information by scraping from the web
+- Notified by e-mail after scraping is complete
 - Show client address on map
 - Analyse client employee and financial information
 
