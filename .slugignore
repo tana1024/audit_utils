@@ -2,7 +2,7 @@
 data/
 utility/
 gis_utils_project/gis_utils_frontend/
-gis_utils_project/gis_utils_projectlocal_settings.py
+gis_utils_project/gis_utils_project/local_settings.py
 README.md
 Dockerfile
 .gitpod.yml
