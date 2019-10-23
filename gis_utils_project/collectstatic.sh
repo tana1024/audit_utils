@@ -1,4 +1,6 @@
 #! /bin/bash
+rm -rf ./static/css
+rm -rf ./static/js
 python manage.py collectstatic
 
 mkdir -p ./templates

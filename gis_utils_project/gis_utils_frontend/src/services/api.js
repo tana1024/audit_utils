@@ -2,7 +2,7 @@ import axios from 'axios'
 import store from '@/store/store'
 
 const api = axios.create({
-  baseURL: 'https://' + window.location.host,
+  baseURL: ((process.env.NODE_ENV === 'production')? 'https://' + window.location.host : 'https://' + process.env.PORT + '-' + window.location.hostname.slice(5)),
   timeout: 5000,
   headers: {
     'Content-Type': 'application/json',

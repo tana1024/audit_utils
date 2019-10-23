@@ -11,3 +11,4 @@ djoser
 pylint
 sqlalchemy
 pytz
+django-cors-headers

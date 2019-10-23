@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'gis_utils_app',
     'djoser',
+    'corsheaders'
 #    'webpack_loader',
 ]
 
@@ -55,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware', #追加
+    'corsheaders.middleware.CorsMiddleware'
 ]
 
 ROOT_URLCONF = 'gis_utils_project.urls'
@@ -158,6 +160,9 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('JWT',),
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
 }
+
+# CORS
+CORS_ORIGIN_ALLOW_ALL = False
 
 #追加
 try:
