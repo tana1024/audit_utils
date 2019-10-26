@@ -22,7 +22,7 @@ class DelegateNewsApi:
               "更新件数: %d"
     count = 0
     limit = 10
-    api_key = ''
+    api_key = mail_server = from_mail_address = from_mail_password = to_mail_address = ''
     newsapi = translator = base = session = None
 
     def pre_news(self):
@@ -37,7 +37,6 @@ class DelegateNewsApi:
 
         table = self.base.classes.gis_utils_app_newsupdatestatus
         model = self.session.query(table).filter(table.api_id==self.API_ID).first()
-        print('model:',model)
         model.status = self.STATUS_COMPLETE
         model.update_count = self.count
         model.update_datetime = dt.now(timezone('UTC'))
@@ -47,12 +46,12 @@ class DelegateNewsApi:
         self.message = self.message % (self.count)
         msg = MIMEText(self.message, 'plain')
         msg["Subject"] = subject
-        msg["To"] = 'gisutilsdev1@cock.li'  # 値を設定すること
-        msg["From"] = 'gisutilsdev3@cock.li'  # 値を設定すること
+        msg["To"] = self.to_mail_address
+        msg["From"] = self.from_mail_address
 
-        server = smtplib.SMTP('mail.cock.li', 587)  # 値を設定すること
+        server = smtplib.SMTP(self.mail_server, 587)
         server.starttls()
-        server.login('gisutilsdev3@cock.li', 'odxf7lgm')  # 値を設定すること
+        server.login(self.from_mail_address, self.from_mail_password)
         server.send_message(msg)
         server.quit()
 
@@ -108,6 +107,12 @@ class DelegateNewsApi:
         with open(django_root + '/parameter.yaml') as file:
             yml = yaml.load(file, Loader=yaml.SafeLoader)
             api_key = yml['news_api']['api_key']
+            self.mail_server = yml['contact']['server']
+            self.from_mail_address = yml['contact']['from']['mail_address']
+            self.from_mail_password = yml['contact']['from']['mail_password']
+            self.to_mail_address = yml['contact']['to']['mail_address']
+
+
         self.newsapi = NewsApiClient(api_key=api_key)
 
         self.translator = Translator()

@@ -3,6 +3,7 @@ import sys
 import time
 import requests
 import re
+import yaml
 import sqlite3
 import argparse
 import smtplib
@@ -47,9 +48,8 @@ class ScrapingAuditClientExecutor:
               "更新件数: %d"
     audit_code = 'sn'  # default value is 'sn'
     count = 0
-    base = None
-    session = None
-
+    base = session = None
+    mail_server = from_mail_address = from_mail_password = to_mail_address = ''
 
     def pre_scraping(self):
         table = self.base.classes.gis_utils_app_clientupdatestatus
@@ -72,12 +72,12 @@ class ScrapingAuditClientExecutor:
         self.message = self.message % (self.AUDIT_CODE_DICT[self.audit_code]['name'], self.count)
         msg = MIMEText(self.message, 'plain')
         msg["Subject"] = subject
-        msg["To"] = 'gisutilsdev1@cock.li'  # 値を設定すること
-        msg["From"] = 'gisutilsdev3@cock.li'  # 値を設定すること
+        msg["To"] = self.to_mail_address
+        msg["From"] = self.from_mail_address
 
-        server = smtplib.SMTP('mail.cock.li', 587)  # 値を設定すること
+        server = smtplib.SMTP(self.mail_server, 587)
         server.starttls()
-        server.login('gisutilsdev3@cock.li', 'odxf7lgm')  # 値を設定すること
+        server.login(self.from_mail_address, self.from_mail_password)
         server.send_message(msg)
         server.quit()
 
@@ -195,6 +195,14 @@ class ScrapingAuditClientExecutor:
         self.audit_code = audit_code
 
         django_root = os.environ.get('DJANGO_ROOT', None)
+
+        with open(django_root + '/parameter.yaml') as file:
+            yml = yaml.load(file, Loader=yaml.SafeLoader)
+            self.mail_server = yml['contact']['server']
+            self.from_mail_address = yml['contact']['from']['mail_address']
+            self.from_mail_password = yml['contact']['from']['mail_password']
+            self.to_mail_address = yml['contact']['to']['mail_address']
+
         database_url = 'sqlite:///%s/db.sqlite3' % (django_root)
         if 'DATABASE_URL' in os.environ:
             database_url = os.environ.get('DATABASE_URL', None)
