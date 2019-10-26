@@ -11,7 +11,6 @@ from decimal import Decimal
 from datetime import datetime
 from pytz import timezone
 from bs4 import BeautifulSoup
-from contextlib import closing
 from email.mime.text import MIMEText
 
 from sqlalchemy import create_engine
@@ -188,14 +187,15 @@ class ScrapingAuditClientExecutor:
         return self
 
     def __exit__(self, ex_type, ex_value, trace):
-        pritn('__exit__:', ex_type, ex_value, trace)
+        print('__exit__:', ex_type, ex_value, trace)
         self.session.close()
 
     def __init__(self, audit_code):
 
         self.audit_code = audit_code
 
-        database_url = 'sqlite:///db.sqlite3'
+        django_root = os.environ.get('DJANGO_ROOT', None)
+        database_url = 'sqlite:///%s/db.sqlite3' % (django_root)
         if 'DATABASE_URL' in os.environ:
             database_url = os.environ.get('DATABASE_URL', None)
 
@@ -225,10 +225,12 @@ if __name__ == '__main__':
 
     with ScrapingAuditClientExecutor(args.audit_code) as exec:
         exec.pre_scraping()
+        exec.commit()
         exec.scraping_client_information()
         # pylint: disable=E1101
         exec.commit()
         exec.request_geocoding()
+        exec.commit()
         exec.post_scraping()
         exec.commit()
 

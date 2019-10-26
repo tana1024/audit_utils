@@ -6,5 +6,5 @@ if [ -z "$1" ]; then
 fi
 
 trap "echo unexpected exception" ERR
-python ./gis_utils_app/scraping/scraping_audit_client.py $1
+python $DJANGO_ROOT/gis_utils_app/scraping/scraping_audit_client.py $1
 exit 0

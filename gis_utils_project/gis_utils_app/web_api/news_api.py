@@ -1,9 +1,12 @@
 import os
 import yaml
+import smtplib
 from datetime import datetime as dt
+from pytz import timezone
 from dateutil.relativedelta import relativedelta as rdelta
 from newsapi import NewsApiClient
 from googletrans import Translator
+from email.mime.text import MIMEText
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm  import sessionmaker, scoped_session
@@ -11,13 +14,49 @@ from sqlalchemy.ext.automap import automap_base
 
 class DelegateNewsApi:
 
+    API_ID = '1'
+    STATUS_PROGRESS = '1'
+    STATUS_COMPLETE = '2'
+
+    message = "ニュースの更新が完了しました。\n" + \
+              "更新件数: %d"
+    count = 0
     limit = 10
     api_key = ''
     newsapi = translator = base = session = None
 
     def pre_news(self):
+        table = self.base.classes.gis_utils_app_newsupdatestatus
+        self.session.query(table).filter(table.api_id==self.API_ID).delete()
+        self.session.add(table(api_id=self.API_ID, status=self.STATUS_PROGRESS, update_count=None, update_datetime=dt.now(timezone('UTC'))))
         table = self.base.classes.gis_utils_app_news
         self.session.query(table).delete()
+
+    def post_news(self):
+        print('ニュース更新の通知処理開始')
+
+        table = self.base.classes.gis_utils_app_newsupdatestatus
+        model = self.session.query(table).filter(table.api_id==self.API_ID).first()
+        print('model:',model)
+        model.status = self.STATUS_COMPLETE
+        model.update_count = self.count
+        model.update_datetime = dt.now(timezone('UTC'))
+
+        # MIMEの作成
+        subject = "ニュース更新の完了通知"
+        self.message = self.message % (self.count)
+        msg = MIMEText(self.message, 'plain')
+        msg["Subject"] = subject
+        msg["To"] = 'gisutilsdev1@cock.li'  # 値を設定すること
+        msg["From"] = 'gisutilsdev3@cock.li'  # 値を設定すること
+
+        server = smtplib.SMTP('mail.cock.li', 587)  # 値を設定すること
+        server.starttls()
+        server.login('gisutilsdev3@cock.li', 'odxf7lgm')  # 値を設定すること
+        server.send_message(msg)
+        server.quit()
+
+        print('ニュース更新の通知処理終了')
 
     def get_news(self):
         print('ニュース取得開始')
@@ -27,6 +66,7 @@ class DelegateNewsApi:
 
         if (news['totalResults'] == 0):
             print('取得したニュースはありません。')
+            return
 
         self.limit = int(news['totalResults']) if self.limit > int(news['totalResults']) else self.limit
         models = []
@@ -47,6 +87,7 @@ class DelegateNewsApi:
                 content = article['content'] or ""
             )
             models.append(model)
+            self.count = self.count + 1
 
         self.session.add_all(models)
         print('ニュース取得終了')
@@ -71,7 +112,7 @@ class DelegateNewsApi:
 
         self.translator = Translator()
 
-        database_url = 'sqlite:///db.sqlite3'
+        database_url = 'sqlite:///%s/db.sqlite3' % (django_root)
         if 'DATABASE_URL' in os.environ:
             database_url = os.environ.get('DATABASE_URL', None)
 
@@ -99,5 +140,8 @@ if __name__ == '__main__':
     with DelegateNewsApi() as delegator:
         print('start')
         delegator.pre_news()
+        delegator.commit()
         delegator.get_news()
+        delegator.commit()
+        delegator.post_news()
         delegator.commit()

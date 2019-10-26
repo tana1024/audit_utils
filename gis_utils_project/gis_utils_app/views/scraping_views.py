@@ -1,3 +1,4 @@
+import os
 import subprocess
 
 from rest_framework.generics import ListAPIView
@@ -17,6 +18,7 @@ class ExecScrapingView(APIView):
 
     def get(self, request):
         if 'audit_code' in request.query_params:
-            cmd = "bash ./gis_utils_app/scraping/launch_scraping.sh " + request.query_params['audit_code']
+            django_root = os.environ.get('DJANGO_ROOT', None)
+            cmd = "bash %s/bash/launch_scraping.sh %s" % (django_root, request.query_params['audit_code'])
             subprocess.Popen(cmd.split())
         return Response('accepted update')

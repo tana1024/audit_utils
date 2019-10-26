@@ -78,6 +78,24 @@ class News(models.Model):
     # コンテンツ
     content = models.CharField(max_length=1000, blank=True)
 
+class NewsUpdateStatus(models.Model):
+
+    STATUS_CHOICES = (
+        ('0', '未更新'),
+        ('1', '更新開始'),
+        ('2', '更新完了'),
+        ('9', '異常終了')
+    )
+
+    # api id
+    api_id = models.CharField(primary_key=True, max_length=1)
+    # 更新ステータス 0:未更新、1:更新開始、2:更新完了、9:異常終了
+    status = models.CharField(max_length=1, blank=False, default='0', choices=STATUS_CHOICES)
+    # 更新件数
+    update_count = models.IntegerField(null=True)
+    # 更新日時
+    update_datetime = models.DateTimeField(default=timezone.now)
+
 class Spot(models.Model):
     # 名前
     name = models.CharField(max_length=50)
