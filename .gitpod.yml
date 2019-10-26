@@ -7,4 +7,5 @@ ports:
 
 tasks:
   - command:  export PATH=$PATH:/workspace/gis_utils/gis_utils_project
+  - command:  export DJANGO_ROOT=$DJANGO_ROOT:/workspace/gis_utils/gis_utils_project
   - command:  python -m pip install django-heroku

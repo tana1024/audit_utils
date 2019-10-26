@@ -53,16 +53,16 @@ class ScrapingAuditClientExecutor:
 
 
     def pre_scraping(self):
-        table = base.classes.gis_utils_app_clientupdatestatus
+        table = self.base.classes.gis_utils_app_clientupdatestatus
         self.session.query(table).filter(table.audit_code==self.audit_code).delete()
         self.session.add(table(audit_code=self.audit_code, status=self.STATUS_PROGRESS, update_count=None, update_datetime=datetime.now(timezone('UTC'))))
-        table = base.classes.gis_utils_app_client
+        table = self.base.classes.gis_utils_app_client
         self.session.query(table).filter(table.audit_code==self.audit_code).delete()
 
     def post_scraping(self):
         print('クライアント情報更新の通知処理開始')
 
-        table = base.classes.gis_utils_app_clientupdatestatus
+        table = self.base.classes.gis_utils_app_clientupdatestatus
         model = self.session.query(table).filter(table.audit_code==self.audit_code).first()
         model.status = self.STATUS_COMPLETE
         model.update_count = self.count
@@ -82,7 +82,7 @@ class ScrapingAuditClientExecutor:
         server.send_message(msg)
         server.quit()
 
-    #     print('クライアント情報更新の通知処理終了')
+        print('クライアント情報更新の通知処理終了')
 
     def adjust_scale(self, soup, target):
         unit = re.sub('[()]','', soup.find(text=target).find_parent().find_parent().find_all('td')[1].text)
@@ -121,7 +121,7 @@ class ScrapingAuditClientExecutor:
                 soup = BeautifulSoup(response.content, "html.parser")
                 try :
 
-                    table = base.classes.gis_utils_app_client
+                    table = self.base.classes.gis_utils_app_client
                     model = table(
                         s_code = soup.find('h2').contents[0].strip().split(' ')[0],
                         name = soup.find('h2').contents[0].strip().split(' ')[1].replace('\u3000', ' '),
@@ -165,7 +165,7 @@ class ScrapingAuditClientExecutor:
     def request_geocoding(self):
         print('geocoding情報更新開始')
 
-        table = base.classes.gis_utils_app_client
+        table = self.base.classes.gis_utils_app_client
         models = self.session.query(table).filter(table.audit_code==self.audit_code).all()
         for model in models:
             response = requests.get(url=self.GEOCODING_API_URL, params={'q': model.street_address})
@@ -181,11 +181,41 @@ class ScrapingAuditClientExecutor:
             time.sleep(10)
         print('geocoding情報更新完了')
 
-    def __init__(self, base, session, audit_code):
-        self.base = base
-        self.session = session
+    def commit(self):
+        self.session.commit()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, trace):
+        pritn('__exit__:', ex_type, ex_value, trace)
+        self.session.close()
+
+    def __init__(self, audit_code):
+
         self.audit_code = audit_code
 
+        database_url = 'sqlite:///db.sqlite3'
+        if 'DATABASE_URL' in os.environ:
+            database_url = os.environ.get('DATABASE_URL', None)
+
+        self.base = automap_base()
+        engine = create_engine(
+            database_url,
+            encoding = "utf-8",
+            echo=True # Trueだと実行のたびにSQLが出力される
+        )
+        self.base.prepare(engine, reflect=True)
+
+        # Sessionの作成
+        self.session = scoped_session(
+            # ORM実行時の設定。自動コミットするか、自動反映するなど。
+            sessionmaker(
+                autocommit = False,
+                autoflush = False,
+                bind = engine
+            )
+        )
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -193,35 +223,12 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    database_url = 'sqlite:///db.sqlite3'
-    if 'DATABASE_URL' in os.environ:
-        database_url = os.environ.get('DATABASE_URL', None)
-
-    base = automap_base()
-    engine = create_engine(
-        database_url,
-        encoding = "utf-8",
-        echo=True # Trueだと実行のたびにSQLが出力される
-    )
-    base.prepare(engine, reflect=True)
-
-    # Sessionの作成
-    session = scoped_session(
-        # ORM実行時の設定。自動コミットするか、自動反映するなど。
-        sessionmaker(
-            autocommit = False,
-            autoflush = False,
-            bind = engine
-        )
-    )
-
-    exec = ScrapingAuditClientExecutor(base, session, args.audit_code)
-    exec.pre_scraping()
-    exec.scraping_client_information()
-    # pylint: disable=E1101
-    session.commit()
-    exec.request_geocoding()
-    exec.post_scraping()
-    session.commit()
-    session.close()
+    with ScrapingAuditClientExecutor(args.audit_code) as exec:
+        exec.pre_scraping()
+        exec.scraping_client_information()
+        # pylint: disable=E1101
+        exec.commit()
+        exec.request_geocoding()
+        exec.post_scraping()
+        exec.commit()
 

@@ -52,6 +52,31 @@ class Client(models.Model):
     class Meta:
         ordering = ('s_code',)
 
+class News(models.Model):
+    # ニュースID
+    news_id = models.AutoField(primary_key=True)
+    # ソース元ID
+    source_id = models.CharField(max_length=100, blank=True)
+    # ソース元名称
+    source_name = models.CharField(max_length=300, blank=True)
+    # 著者
+    author = models.CharField(max_length=100, blank=True)
+    # タイトル
+    title = models.CharField(max_length=500, blank=True)
+    # タイトル(日本語訳)
+    title_jp = models.CharField(max_length=500, blank=True)
+    # 詳細
+    description = models.CharField(max_length=1000, blank=True)
+    # 詳細(日本語訳)
+    description_jp = models.CharField(max_length=1000, blank=True)
+    # 記事のURL
+    url = models.CharField(max_length=300, blank=True)
+    # イメージ画像のurl
+    url_to_image = models.CharField(max_length=300, blank=True)
+    # 出版日時
+    published_at = models.DateTimeField(null=True)
+    # コンテンツ
+    content = models.CharField(max_length=1000, blank=True)
 
 class Spot(models.Model):
     # 名前

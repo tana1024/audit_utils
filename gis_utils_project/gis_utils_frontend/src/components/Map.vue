@@ -1,6 +1,7 @@
 <template>
   <div>
     <h3>Map（クライアントアドレスマッピング）</h3>
+    <hr>
     <div class="d-flex">
       <div id="sub-sidebar">
         <div class="list-group list-group-flush">
@@ -89,7 +90,7 @@ export default {
 <style>
 #map {
   height: 80vh;
-  width: 65vw;
+  width: 68vw;
 }
 #sub-sidebar {
   height: 80vh;

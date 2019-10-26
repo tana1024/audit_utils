@@ -12,3 +12,7 @@ pylint
 sqlalchemy
 pytz
 django-cors-headers
+newsapi-python
+python-dateutil
+pyyaml
+googletrans

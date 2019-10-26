@@ -4,6 +4,7 @@
       <p>クライアント情報を更新してもよろしいでしょうか？</p>
     </b-modal>
     <h3>Scraping（クライアント情報スクレイピング）</h3>
+    <hr>
     <div class="container-fluid">
       <GlobalMessage/>
     </div>
