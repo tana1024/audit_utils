@@ -8,7 +8,6 @@ gunicorn
 django-heroku
 djangorestframework-simplejwt
 djoser
-pylint
 sqlalchemy
 pytz
 django-cors-headers
