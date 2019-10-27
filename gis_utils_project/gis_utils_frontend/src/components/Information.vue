@@ -6,8 +6,8 @@
       <!-- Example row of columns -->
       <div class="row" v-for="ii in i">
         <div class="col-md-4" v-for="jj in ii == i? j: 3">
-          <h5>{{news[(ii-1)*3+jj-1].title}}</h5>
-          <p>{{news[(ii-1)*3+jj-1].description}}</p>
+          <h5 v-b-tooltip.hover v-bind:title="news[(ii-1)*3+jj-1].title_jp">{{news[(ii-1)*3+jj-1].title}}</h5>
+          <p v-b-tooltip.hover v-bind:title="news[(ii-1)*3+jj-1].description_jp">{{news[(ii-1)*3+jj-1].description}}</p>
           <p><a class="btn btn-secondary" v-bind:href="news[(ii-1)*3+jj-1].url" target="_blank" rel="noopener noreferrer" role="button">View details &raquo;</a></p>
         </div>
       </div>
