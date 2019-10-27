@@ -72,7 +72,7 @@ class News(models.Model):
     # 記事のURL
     url = models.CharField(max_length=300, blank=True)
     # イメージ画像のurl
-    url_to_image = models.CharField(max_length=300, blank=True)
+    url_to_image = models.CharField(max_length=500, blank=True)
     # 出版日時
     published_at = models.DateTimeField(null=True)
     # コンテンツ
