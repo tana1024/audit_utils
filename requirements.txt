@@ -1,6 +1,14 @@
 requests
 beautifulsoup4
 pandas
+pylint
+sqlalchemy
+pytz
+django-cors-headers
+newsapi-python
+python-dateutil
+pyyaml
+googletrans
 django
 django-rest-framework
 django-webpack-loader
@@ -8,7 +16,3 @@ gunicorn
 django-heroku
 djangorestframework-simplejwt
 djoser
-pylint
-sqlalchemy
-pytz
-django-cors-headers

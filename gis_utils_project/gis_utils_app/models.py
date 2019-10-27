@@ -52,6 +52,52 @@ class Client(models.Model):
     class Meta:
         ordering = ('s_code',)
 
+class News(models.Model):
+    # ニュースID
+    news_id = models.AutoField(primary_key=True)
+    # ソース元ID
+    source_id = models.CharField(max_length=100, blank=True)
+    # ソース元名称
+    source_name = models.CharField(max_length=300, blank=True)
+    # 著者
+    author = models.CharField(max_length=100, blank=True)
+    # タイトル
+    title = models.CharField(max_length=500, blank=True)
+    # タイトル(日本語訳)
+    title_jp = models.CharField(max_length=500, blank=True)
+    # 詳細
+    description = models.CharField(max_length=1000, blank=True)
+    # 詳細(日本語訳)
+    description_jp = models.CharField(max_length=1000, blank=True)
+    # 記事のURL
+    url = models.CharField(max_length=300, blank=True)
+    # イメージ画像のurl
+    url_to_image = models.CharField(max_length=300, blank=True)
+    # 出版日時
+    published_at = models.DateTimeField(null=True)
+    # コンテンツ
+    content = models.CharField(max_length=1000, blank=True)
+
+    class Meta:
+        ordering = ('-published_at',)
+
+class NewsUpdateStatus(models.Model):
+
+    STATUS_CHOICES = (
+        ('0', '未更新'),
+        ('1', '更新開始'),
+        ('2', '更新完了'),
+        ('9', '異常終了')
+    )
+
+    # api id
+    api_id = models.CharField(primary_key=True, max_length=1)
+    # 更新ステータス 0:未更新、1:更新開始、2:更新完了、9:異常終了
+    status = models.CharField(max_length=1, blank=False, default='0', choices=STATUS_CHOICES)
+    # 更新件数
+    update_count = models.IntegerField(null=True)
+    # 更新日時
+    update_datetime = models.DateTimeField(default=timezone.now)
 
 class Spot(models.Model):
     # 名前

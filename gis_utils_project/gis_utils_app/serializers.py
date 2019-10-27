@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Spot
-from .models import Client, ClientUpdateStatus
+from .models import Client, News, ClientUpdateStatus, NewsUpdateStatus
 
 
 class ClientSerializer(serializers.ModelSerializer):
@@ -21,6 +21,22 @@ class ClientUpdateStatusSerializer(serializers.ModelSerializer):
     def get_status(self,obj):
         return obj.get_status_display()
 
+class NewsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = News
+        fields = ('news_id', 'source_name', 'title', 'title_jp', 'description', 'description_jp', 'url', 'published_at')
+
+class NewsUpdateStatusSerializer(serializers.ModelSerializer):
+
+    status = serializers.SerializerMethodField()
+
+    class Meta:
+        model = NewsUpdateStatus
+        fields = ('api_id', 'status', 'update_count', 'update_datetime')
+
+    def get_status(self,obj):
+        return obj.get_status_display()
 
 class ClientBarChartSerializer(serializers.Serializer):
 

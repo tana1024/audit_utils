@@ -44,11 +44,6 @@ const router = new Router({
           component: Information
         },
         {
-          path: 'scraping',
-          name: 'Scraping',
-          component: Scraping
-        },
-        {
           path: 'map',
           name: 'Map',
           component: Map
@@ -57,6 +52,11 @@ const router = new Router({
           path: 'chart',
           name: 'Chart',
           component: Chart
+        },
+        {
+          path: 'scraping',
+          name: 'Scraping',
+          component: Scraping
         }
       ]
     }

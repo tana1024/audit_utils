@@ -3,6 +3,7 @@ import sys
 import time
 import requests
 import re
+import yaml
 import sqlite3
 import argparse
 import smtplib
@@ -11,7 +12,6 @@ from decimal import Decimal
 from datetime import datetime
 from pytz import timezone
 from bs4 import BeautifulSoup
-from contextlib import closing
 from email.mime.text import MIMEText
 
 from sqlalchemy import create_engine
@@ -48,21 +48,20 @@ class ScrapingAuditClientExecutor:
               "更新件数: %d"
     audit_code = 'sn'  # default value is 'sn'
     count = 0
-    base = None
-    session = None
-
+    base = session = None
+    mail_server = from_mail_address = from_mail_password = to_mail_address = ''
 
     def pre_scraping(self):
-        table = base.classes.gis_utils_app_clientupdatestatus
+        table = self.base.classes.gis_utils_app_clientupdatestatus
         self.session.query(table).filter(table.audit_code==self.audit_code).delete()
         self.session.add(table(audit_code=self.audit_code, status=self.STATUS_PROGRESS, update_count=None, update_datetime=datetime.now(timezone('UTC'))))
-        table = base.classes.gis_utils_app_client
+        table = self.base.classes.gis_utils_app_client
         self.session.query(table).filter(table.audit_code==self.audit_code).delete()
 
     def post_scraping(self):
         print('クライアント情報更新の通知処理開始')
 
-        table = base.classes.gis_utils_app_clientupdatestatus
+        table = self.base.classes.gis_utils_app_clientupdatestatus
         model = self.session.query(table).filter(table.audit_code==self.audit_code).first()
         model.status = self.STATUS_COMPLETE
         model.update_count = self.count
@@ -73,16 +72,16 @@ class ScrapingAuditClientExecutor:
         self.message = self.message % (self.AUDIT_CODE_DICT[self.audit_code]['name'], self.count)
         msg = MIMEText(self.message, 'plain')
         msg["Subject"] = subject
-        msg["To"] = 'gisutilsdev1@cock.li'  # 値を設定すること
-        msg["From"] = 'gisutilsdev3@cock.li'  # 値を設定すること
+        msg["To"] = self.to_mail_address
+        msg["From"] = self.from_mail_address
 
-        server = smtplib.SMTP('mail.cock.li', 587)  # 値を設定すること
+        server = smtplib.SMTP(self.mail_server, 587)
         server.starttls()
-        server.login('gisutilsdev3@cock.li', 'odxf7lgm')  # 値を設定すること
+        server.login(self.from_mail_address, self.from_mail_password)
         server.send_message(msg)
         server.quit()
 
-    #     print('クライアント情報更新の通知処理終了')
+        print('クライアント情報更新の通知処理終了')
 
     def adjust_scale(self, soup, target):
         unit = re.sub('[()]','', soup.find(text=target).find_parent().find_parent().find_all('td')[1].text)
@@ -121,7 +120,7 @@ class ScrapingAuditClientExecutor:
                 soup = BeautifulSoup(response.content, "html.parser")
                 try :
 
-                    table = base.classes.gis_utils_app_client
+                    table = self.base.classes.gis_utils_app_client
                     model = table(
                         s_code = soup.find('h2').contents[0].strip().split(' ')[0],
                         name = soup.find('h2').contents[0].strip().split(' ')[1].replace('\u3000', ' '),
@@ -165,7 +164,7 @@ class ScrapingAuditClientExecutor:
     def request_geocoding(self):
         print('geocoding情報更新開始')
 
-        table = base.classes.gis_utils_app_client
+        table = self.base.classes.gis_utils_app_client
         models = self.session.query(table).filter(table.audit_code==self.audit_code).all()
         for model in models:
             response = requests.get(url=self.GEOCODING_API_URL, params={'q': model.street_address})
@@ -181,11 +180,50 @@ class ScrapingAuditClientExecutor:
             time.sleep(10)
         print('geocoding情報更新完了')
 
-    def __init__(self, base, session, audit_code):
-        self.base = base
-        self.session = session
+    def commit(self):
+        self.session.commit()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, ex_type, ex_value, trace):
+        print('__exit__:', ex_type, ex_value, trace)
+        self.session.close()
+
+    def __init__(self, audit_code):
+
         self.audit_code = audit_code
 
+        django_root = os.environ.get('DJANGO_ROOT', None)
+
+        with open(django_root + '/parameter.yaml') as file:
+            yml = yaml.load(file, Loader=yaml.SafeLoader)
+            self.mail_server = yml['contact']['server']
+            self.from_mail_address = yml['contact']['from']['mail_address']
+            self.from_mail_password = yml['contact']['from']['mail_password']
+            self.to_mail_address = yml['contact']['to']['mail_address']
+
+        database_url = 'sqlite:///%s/db.sqlite3' % (django_root)
+        if 'DATABASE_URL' in os.environ:
+            database_url = os.environ.get('DATABASE_URL', None)
+
+        self.base = automap_base()
+        engine = create_engine(
+            database_url,
+            encoding = "utf-8",
+            echo=True # Trueだと実行のたびにSQLが出力される
+        )
+        self.base.prepare(engine, reflect=True)
+
+        # Sessionの作成
+        self.session = scoped_session(
+            # ORM実行時の設定。自動コミットするか、自動反映するなど。
+            sessionmaker(
+                autocommit = False,
+                autoflush = False,
+                bind = engine
+            )
+        )
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -193,35 +231,14 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    database_url = 'sqlite:///db.sqlite3'
-    if 'DATABASE_URL' in os.environ:
-        database_url = os.environ.get('DATABASE_URL', None)
-
-    base = automap_base()
-    engine = create_engine(
-        database_url,
-        encoding = "utf-8",
-        echo=True # Trueだと実行のたびにSQLが出力される
-    )
-    base.prepare(engine, reflect=True)
-
-    # Sessionの作成
-    session = scoped_session(
-        # ORM実行時の設定。自動コミットするか、自動反映するなど。
-        sessionmaker(
-            autocommit = False,
-            autoflush = False,
-            bind = engine
-        )
-    )
-
-    exec = ScrapingAuditClientExecutor(base, session, args.audit_code)
-    exec.pre_scraping()
-    exec.scraping_client_information()
-    # pylint: disable=E1101
-    session.commit()
-    exec.request_geocoding()
-    exec.post_scraping()
-    session.commit()
-    session.close()
+    with ScrapingAuditClientExecutor(args.audit_code) as exec:
+        exec.pre_scraping()
+        exec.commit()
+        exec.scraping_client_information()
+        # pylint: disable=E1101
+        exec.commit()
+        exec.request_geocoding()
+        exec.commit()
+        exec.post_scraping()
+        exec.commit()
 

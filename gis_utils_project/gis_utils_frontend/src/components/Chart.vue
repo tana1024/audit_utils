@@ -1,6 +1,7 @@
 <template>
   <div>
     <h3>Chart（クライアント情報チャート）</h3>
+    <hr>
     <div class="d-flex">
       <div id="sub-sidebar">
         <div class="list-group list-group-flush">
