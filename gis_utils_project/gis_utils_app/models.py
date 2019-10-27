@@ -78,6 +78,9 @@ class News(models.Model):
     # コンテンツ
     content = models.CharField(max_length=1000, blank=True)
 
+    class Meta:
+        ordering = ('-published_at',)
+
 class NewsUpdateStatus(models.Model):
 
     STATUS_CHOICES = (

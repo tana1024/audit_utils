@@ -97,59 +97,59 @@ export default {
     }
   },
   created () {
-      api.get('/api/scraping/init_scraping')
-        .then(response=>{
-          console.log('status:', response.status)
-          console.log('responseData:', response.data)
+    api.get('/api/scraping/init_scraping')
+      .then(response=>{
+        console.log('status:', response.status)
+        console.log('responseData:', response.data)
 
-          var data = {
-                      'sn': [{update_datetime: '-', update_count: '-', status: '-'}],
-                      'az': [{update_datetime: '-', update_count: '-', status: '-'}],
-                      'dt': [{update_datetime: '-', update_count: '-', status: '-'}],
-                      'ar': [{update_datetime: '-', update_count: '-', status: '-'}]
-                      }
-          data['sn'] = response.data.filter(function(item, index){
-            if (item.audit_code == 'sn') return true
-          })
-          data['az'] = response.data.filter(function(item, index){
-            if (item.audit_code == 'az') return true
-          })
-          data['dt'] = response.data.filter(function(item, index){
-            if (item.audit_code == 'dt') return true
-          })
-          data['ar'] = response.data.filter(function(item, index){
-            if (item.audit_code == 'ar') return true
-          })
-
-          this.auditSnInfo.updateDatetime = (new Date(data['sn'][0].update_datetime)).toLocaleString()
-          this.auditSnInfo.updateStatus = data['sn'][0].status
-          this.auditSnInfo.updateCount = data['sn'][0].update_count || '-'
-          this.auditAzInfo.updateDatetime = (new Date(data['az'][0].update_datetime)).toLocaleString()
-          this.auditAzInfo.updateStatus = data['az'][0].status
-          this.auditAzInfo.updateCount = data['az'][0].update_count || '-'
-          this.auditDtInfo.updateDatetime = (new Date(data['dt'][0].update_datetime)).toLocaleString()
-          this.auditDtInfo.updateStatus = data['dt'][0].status
-          this.auditDtInfo.updateCount = data['dt'][0].update_count || '-'
-          this.auditArInfo.updateDatetime = (new Date(data['ar'][0].update_datetime)).toLocaleString()
-          this.auditArInfo.updateStatus = data['ar'][0].status
-          this.auditArInfo.updateCount = data['ar'][0].update_count || '-'
-
+        var data = {
+                    'sn': [{update_datetime: '-', update_count: '-', status: '-'}],
+                    'az': [{update_datetime: '-', update_count: '-', status: '-'}],
+                    'dt': [{update_datetime: '-', update_count: '-', status: '-'}],
+                    'ar': [{update_datetime: '-', update_count: '-', status: '-'}]
+                    }
+        data['sn'] = response.data.filter(function(item, index){
+          if (item.audit_code == 'sn') return true
+        })
+        data['az'] = response.data.filter(function(item, index){
+          if (item.audit_code == 'az') return true
+        })
+        data['dt'] = response.data.filter(function(item, index){
+          if (item.audit_code == 'dt') return true
+        })
+        data['ar'] = response.data.filter(function(item, index){
+          if (item.audit_code == 'ar') return true
         })
 
-      api.get('/api/scraping/init_webapi')
-        .then(response=>{
-          console.log('status:', response.status)
-          console.log('responseData:', response.data)
-          var data = {
-                      '1': [{update_datetime: '-', update_count: '-', status: '-'}]
-                      }
-          data['1'] = response.data.filter(function(item, index){
-            if (item.api_id == '1') return true
-          })
-          this.webapiNewsInfo.updateDatetime = (new Date(data['1'][0].update_datetime)).toLocaleString()
-          this.webapiNewsInfo.updateStatus = data['1'][0].status
-          this.webapiNewsInfo.updateCount = data['1'][0].update_count || '-'
+        this.auditSnInfo.updateDatetime = (new Date(data['sn'][0].update_datetime)).toLocaleString()
+        this.auditSnInfo.updateStatus = data['sn'][0].status
+        this.auditSnInfo.updateCount = data['sn'][0].update_count || '-'
+        this.auditAzInfo.updateDatetime = (new Date(data['az'][0].update_datetime)).toLocaleString()
+        this.auditAzInfo.updateStatus = data['az'][0].status
+        this.auditAzInfo.updateCount = data['az'][0].update_count || '-'
+        this.auditDtInfo.updateDatetime = (new Date(data['dt'][0].update_datetime)).toLocaleString()
+        this.auditDtInfo.updateStatus = data['dt'][0].status
+        this.auditDtInfo.updateCount = data['dt'][0].update_count || '-'
+        this.auditArInfo.updateDatetime = (new Date(data['ar'][0].update_datetime)).toLocaleString()
+        this.auditArInfo.updateStatus = data['ar'][0].status
+        this.auditArInfo.updateCount = data['ar'][0].update_count || '-'
+
+      })
+
+    api.get('/api/scraping/init_webapi')
+      .then(response=>{
+        console.log('status:', response.status)
+        console.log('responseData:', response.data)
+        var data = {
+                    '1': [{update_datetime: '-', update_count: '-', status: '-'}]
+                    }
+        data['1'] = response.data.filter(function(item, index){
+          if (item.api_id == '1') return true
         })
+        this.webapiNewsInfo.updateDatetime = (new Date(data['1'][0].update_datetime)).toLocaleString()
+        this.webapiNewsInfo.updateStatus = data['1'][0].status
+        this.webapiNewsInfo.updateCount = data['1'][0].update_count || '-'
+      })
   },
   methods: {
     showScrapingModal: function(audit_code) {
