@@ -16,6 +16,9 @@
       <!-- /#sidebar-wrapper -->
       <!-- Page Content -->
       <div id="page-content-wrapper">
+        <b-modal id="modal-logout-confirm" title="確認" @ok="execLogout">
+          <p>ログアウトしてもよろしいでしょうか？</p>
+        </b-modal>
 
         <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
           <button class="btn btn-primary" id="menu-toggle">Toggle Menu</button>
@@ -25,24 +28,20 @@
           </button>
 
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+            <ul class="navbar-nav ml-auto">
               <li class="nav-item active">
                 <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#">Link</a>
               </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Dropdown
-                </a>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                  <a class="dropdown-item" href="#">Action</a>
-                  <a class="dropdown-item" href="#">Another action</a>
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Something else here</a>
-                </div>
-              </li>
+              <b-dropdown id="dropdown-1" right v-bind:text="'user : ' + getUsername">
+                <b-dropdown-item>First Action</b-dropdown-item>
+                <b-dropdown-item>Second Action</b-dropdown-item>
+                <b-dropdown-item>Third Action</b-dropdown-item>
+                <b-dropdown-divider></b-dropdown-divider>
+                <b-dropdown-item @click="showLogoutModal()">Sign out</b-dropdown-item>
+              </b-dropdown>
             </ul>
           </div>
         </nav>
@@ -57,7 +56,21 @@
 
 <script>
 export default {
-  name: 'Portal'
+  name: 'Portal',
+  computed: {
+    getUsername: function () {
+      return this.$store.state.authData.username
+    }
+  },
+  methods: {
+    showLogoutModal: function() {
+      this.$bvModal.show('modal-logout-confirm')
+    },
+    execLogout: function() {
+      this.$store.dispatch('authData/logout')
+      this.$router.push({path: 'login'})
+    }
+  }
 }
 </script>
 

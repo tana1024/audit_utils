@@ -8,12 +8,10 @@ export const AuthData = {
     username: '',
     isLoggedIn: false
   },
-
   getters: {
     username: state => state.username,
     isLoggedIn: state => state.isLoggedIn
   },
-
   mutations: {
     set (state, payload) {
       state.username = payload.user.username

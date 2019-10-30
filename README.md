@@ -30,8 +30,10 @@ This application analyses client information of audit corporation
 - webpack
 - Bash
 
-## Use Web API
-- News API : https://newsapi.org/
-
 ## Scraping Web Site
 - 上場企業データベース : https://xn--vckya7nx51ik9ay55a3l3a.com/
+
+<!--
+## Use Web API
+- News API : https://newsapi.org/
+-->
