@@ -16,13 +16,13 @@
       <div>
         <ul class="nav nav-tabs">
           <li class="nav-item">
-            <a @click="selectTab('profile')" class="nav-link" v-bind:class="{'active bg-secondary text-white': isActive === 'profile'}">プロファイル</a>
+            <a @click="selectTab('profile')" class="nav-link" v-bind:class="{'active bg-secondary text-white': isActive === 'profile'}">Profile</a>
           </li>
           <li class="nav-item">
-            <a @click="selectTab('account')" class="nav-link" v-bind:class="{'active bg-secondary text-white': isActive === 'account'}">アカウント</a>
+            <a @click="selectTab('account')" class="nav-link" v-bind:class="{'active bg-secondary text-white': isActive === 'account'}">Account</a>
           </li>
           <li class="nav-item">
-            <a @click="selectTab('parameter')" class="nav-link" v-bind:class="{'active bg-secondary text-white': isActive === 'parameter'}">パラメータ</a>
+            <a @click="selectTab('parameter')" class="nav-link" v-bind:class="{'active bg-secondary text-white': isActive === 'parameter'}">Parameter</a>
           </li>
         </ul>
       </div>

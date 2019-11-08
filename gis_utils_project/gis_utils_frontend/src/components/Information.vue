@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div id="information">
     <h3>Information(News API 連携情報)</h3>
     <hr>
-    <div class="container">
+    <div id="info-area" class="container">
       <!-- Example row of columns -->
       <div class="row" v-for="ii in i">
         <div class="col-md-4" v-for="jj in ii == i? j: 3">
@@ -47,5 +47,11 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+
+  #info-area {
+    overflow-y: auto;
+    height: 80vh;
+  }
+
 </style>

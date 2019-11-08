@@ -20,22 +20,36 @@
       </div>
       <div class="col-8 mt-3">
         <div class="mb-2">
-          <label for="cpassword">Current Password</label>
+          <label for="c-password">Current Password</label>
         </div>
         <div class="mb-3">
-          <b-form-input id="cpassword" v-model="cPassword" placeholder="enter current your password" class="w-50"></b-form-input>
+          <b-form-input id="c-password" v-model="cPassword" placeholder="enter current your password" class="w-50"></b-form-input>
         </div>
         <div class="mb-2">
-          <label for="npassword">New Password</label>
+          <label for="n-password">New Password</label>
         </div>
         <div class="mb-3">
-          <b-form-input id="npassword" v-model="nPassword" placeholder="enter a new password" class="w-50"></b-form-input>
+          <b-form-input id="n-password" v-model="nPassword" placeholder="enter a new password" class="w-50" v-b-tooltip.hover title="Password must be 8 or more characters."></b-form-input>
         </div>
         <div class="mb-2">
-          <label for="cnpassword">Confirm New Password</label>
+          <label for="cn-password">Confirm New Password</label>
         </div>
         <div class="mb-3">
-          <b-form-input id="cnpassword" v-model="cnPassword" placeholder="enter the password again" class="w-50"></b-form-input>
+          <b-form-input id="cn-password" v-model="cnPassword" placeholder="enter the password again" class="w-50"></b-form-input>
+        </div>
+        <div class="mb-3">
+          <b-button id="cp-button" variant="primary">Update Password</b-button>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-4 mt-3 mb-5 pl-5">
+        Close Account
+      </div>
+      <div class="col-8 mb-5 mt-3">
+        <div>
+          <b-button id="ca-button" variant="danger">Close this Account</b-button>
         </div>
       </div>
     </div>
@@ -46,13 +60,19 @@ export default {
   name: 'Profile',
   data: function() {
     return {
-      userName: 'gisutils',
-      cPassowrd: 'abcde'
+      userName: 'gisutils'
     }
   }
 }
 </script>
 
-<style>
+<style scoped>
+
+  #profile {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 80vh;
+  }
+
 </style>
 
