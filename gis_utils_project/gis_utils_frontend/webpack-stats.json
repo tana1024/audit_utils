@@ -1,1 +1,1 @@
-{"status":"done","publicPath":"/","chunks":{"app":[{"name":"build.js","publicPath":"/build.js","path":"/workspace/gis_utils/gis_utils_project/gis_utils_frontend/dist/build.js"},{"name":"0.9d7f833f933a6f5dfedb.hot-update.js","publicPath":"/0.9d7f833f933a6f5dfedb.hot-update.js","path":"/workspace/gis_utils/gis_utils_project/gis_utils_frontend/dist/0.9d7f833f933a6f5dfedb.hot-update.js"}]}}
+{"status":"done","publicPath":"/","chunks":{"app":[{"name":"build.js","publicPath":"/build.js","path":"/workspace/gis_utils/gis_utils_project/gis_utils_frontend/dist/build.js"}]}}
