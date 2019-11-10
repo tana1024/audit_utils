@@ -32,7 +32,7 @@
             <label for="c-password">Confirm Password</label>
           </div>
           <div class="mb-4">
-            <validation-provider v-slot="{ errors }" rules="required|alpha_dash|min:8|max:50" name="ConfirmPassword">
+            <validation-provider v-slot="{ errors }" rules="required|alpha_dash|min:8|max:50" name="Confirm Password">
               <b-form-input type="password" id="c-password" v-model="cPassword" placeholder="enter the password again" class="w-50"></b-form-input>
               <p v-show="errors.length" class="alert alert-danger w-50">
                 {{ errors[0] }}
@@ -48,6 +48,8 @@
   </div>
 </template>
 <script>
+import GlobalMessage from '@/components/global/GlobalMessage'
+import api from '@/services/api'
 import { ValidationProvider, ValidationObserver, localize, extend } from 'vee-validate'
 import ja from 'vee-validate/dist/locale/ja.json'
 import * as rules from 'vee-validate/dist/rules'
@@ -74,7 +76,6 @@ export default {
       userName: '',
       password: '',
       cPassword: '',
-      cPasswordInvalid: false
     }
   },
   methods: {
