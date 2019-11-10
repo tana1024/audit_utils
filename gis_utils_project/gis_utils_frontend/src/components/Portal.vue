@@ -1,52 +1,21 @@
 <template>
-  <div id="dashboard">
+  <div id="portal">
     <div class="d-flex" id="wrapper">
       <!-- Sidebar -->
       <div class="bg-light border-right" id="sidebar-wrapper">
-        <div class="sidebar-heading">GIS Utils</div>
-        <div class="list-group list-group-flush">
+        <GlobalSideHeader/>
+        <div id="sidebar-menu" class="list-group list-group-flush">
           <router-link to="/portal/information" class="list-group-item list-group-item-action bg-light">Information</router-link>
           <router-link to="/portal/map"  class="list-group-item list-group-item-action bg-light">Map</router-link>
           <router-link to="/portal/chart" class="list-group-item list-group-item-action bg-light">Chart</router-link>
-          <router-link to="/portal/scraping"  class="list-group-item list-group-item-action bg-light">Scraping</router-link>
-          <a href="#" class="list-group-item list-group-item-action bg-light">Profile</a>
-          <a href="#" class="list-group-item list-group-item-action bg-light">Setting</a>
+          <router-link to="/portal/scraping"  class="list-group-item list-group-item-action bg-light border-bottom">Scraping</router-link>
         </div>
       </div>
       <!-- /#sidebar-wrapper -->
       <!-- Page Content -->
       <div id="page-content-wrapper">
-
-        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-          <button class="btn btn-primary" id="menu-toggle">Toggle Menu</button>
-
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-              <li class="nav-item active">
-                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Dropdown
-                </a>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                  <a class="dropdown-item" href="#">Action</a>
-                  <a class="dropdown-item" href="#">Another action</a>
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Something else here</a>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </nav>
-        <div class="container-fluid">
+        <GlobalMainHeader/>
+        <div id="main-panel" class="container-fluid">
           <router-view/>
         </div>
       </div>
@@ -56,15 +25,21 @@
 </template>
 
 <script>
+import GlobalSideHeader from '@/components/global/GlobalSideHeader'
+import GlobalMainHeader from '@/components/global/GlobalMainHeader'
+
 export default {
-  name: 'Portal'
+  name: 'Portal',
+  components: {
+    GlobalSideHeader,
+    GlobalMainHeader
+  }
 }
 </script>
 
 <style scoped>
 
   #sidebar-wrapper {
-    min-height: 100vh;
     margin-left: -15rem;
     -webkit-transition: margin .25s ease-out;
     -moz-transition: margin .25s ease-out;
@@ -72,13 +47,9 @@ export default {
     transition: margin .25s ease-out;
   }
 
-  #sidebar-wrapper .sidebar-heading {
-    padding: 0.875rem 1.25rem;
-    font-size: 1.2rem;
-  }
-
-  #sidebar-wrapper .list-group {
-    width: 15rem;
+  #sidebar-menu {
+    min-height: 90vh;
+    width: 14.5rem;
   }
 
   #page-content-wrapper {
@@ -87,6 +58,10 @@ export default {
 
   #wrapper.toggled #sidebar-wrapper {
     margin-left: 0;
+  }
+
+  #main-panel {
+    min-height: 90vh;
   }
 
   @media (min-width: 768px) {

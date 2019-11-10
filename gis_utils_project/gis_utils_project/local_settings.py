@@ -14,6 +14,6 @@ DATABASES = {
 
 # CORS
 CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_REGEX_WHITELIST = (r'^https://.*.ws-ap0.gitpod.io$', )
+CORS_ORIGIN_REGEX_WHITELIST = (r'^https://.*.ws-ap.*.gitpod.io$', )
 
 DEBUG = True

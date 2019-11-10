@@ -4,6 +4,10 @@ import Router from 'vue-router'
 //import HelloWorld from '@/components/HelloWorld'
 import Login from '@/components/Login'
 import Portal from '@/components/Portal'
+import Settings from '@/components/Settings'
+import Profile from '@/components/Profile'
+import Account from '@/components/Account'
+import Parameter from '@/components/Parameter'
 import Information from '@/components/Information'
 import Scraping from '@/components/Scraping'
 import Map from '@/components/Map'
@@ -29,6 +33,34 @@ const router = new Router({
       component: Login
     },
     {
+      path: '/settings',
+      meta: { requiresAuth: true },
+      name: 'Settings',
+      component: Settings,
+      children: [
+        {
+          path: '',
+          name: 'Profile',
+          component: Profile
+        },
+        {
+          path: 'profile',
+          name: 'Profile',
+          component: Profile
+        },
+        {
+          path: 'account',
+          name: 'Account',
+          component: Account
+        },
+        {
+          path: 'parameter',
+          name: 'Parameter',
+          component: Parameter
+        }
+      ]
+    },
+    {
       path: '/portal',
       meta: { requiresAuth: true },
       component: Portal,
@@ -36,6 +68,11 @@ const router = new Router({
         {
           path: '',
           name: 'Portal',
+          component: Information
+        },
+        {
+          path: 'information',
+          name: 'Information',
           component: Information
         },
         {
