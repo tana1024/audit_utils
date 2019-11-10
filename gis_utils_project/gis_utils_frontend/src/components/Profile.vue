@@ -34,7 +34,7 @@
         <div class="mb-2">
           <label for="cn-password">Confirm New Password</label>
         </div>
-        <div class="mb-3">
+        <div class="mb-4">
           <b-form-input id="cn-password" v-model="cnPassword" placeholder="enter the password again" class="w-50"></b-form-input>
         </div>
         <div class="mb-3">

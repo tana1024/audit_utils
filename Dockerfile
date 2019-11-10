@@ -25,3 +25,4 @@ RUN npm install -g http-server
 #RUN npm install --save leaflet-sprite
 #RUN npm install --save vue-chartjs chart.js
 #RUN npm install --save vuex
+#RUN npm install --save vee-validate
