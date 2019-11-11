@@ -32,7 +32,7 @@
             <label for="c-password">Confirm Password</label>
           </div>
           <div class="mb-4">
-            <validation-provider v-slot="{ errors }" rules="required|alpha_dash|min:8|max:50" name="Confirm Password">
+            <validation-provider v-slot="{ errors }" rules="required|alpha_dash|min:8|max:50" name="ConfirmPassword">
               <b-form-input type="password" id="c-password" v-model="cPassword" placeholder="enter the password again" class="w-50"></b-form-input>
               <p v-show="errors.length" class="alert alert-danger w-50">
                 {{ errors[0] }}
