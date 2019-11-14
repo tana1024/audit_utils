@@ -13,7 +13,7 @@ django
 django-rest-framework
 django-webpack-loader
 gunicorn
-django-heroku
 djangorestframework-simplejwt
 djoser
 factory-boy
+#django-heroku
