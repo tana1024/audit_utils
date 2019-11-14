@@ -33,3 +33,5 @@ jobs:
         cd gis_utils_project
         python manage.py test gis_utils_app
         echo "Hello World!!!"
+      env:
+        DJANGO_SETTINGS_MODULE: gis_utils_project.set_tings.production_settings
