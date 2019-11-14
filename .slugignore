@@ -1,8 +1,11 @@
+.github/
 .theia/
 data/
 utility/
+gis_utils_project/gis_utils_app/tests/
 gis_utils_project/gis_utils_frontend/
 gis_utils_project/gis_utils_project/set_tings/local_settings.py
+.gitignore
 README.md
 Dockerfile
 .gitpod.yml
