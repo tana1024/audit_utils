@@ -16,5 +16,4 @@ gunicorn
 djangorestframework-simplejwt
 djoser
 factory-boy
-dj_database_url
-#django-heroku
+django-heroku
