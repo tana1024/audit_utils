@@ -13,13 +13,18 @@ This application analyses client information of audit corporation
 # System environment
 ## Production environment
 - heroku
+- dyno(ubuntu)
 - postgres
 
-## Testing environment
+## Development environment
 - gitpod
 - docker(debian)
 - github
 - sqlite3
+
+## CI/CD
+- github actions
+- test module(python: unittest.testcase)
 
 ## Programming language, library, framework, tool, etc.
 - Python(bautifulsoup, sqlalchemy, newsapi, googletrans, etc.)
