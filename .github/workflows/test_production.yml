@@ -1,9 +1,6 @@
-name: Python package
+name: test_production
 
-on: 
-  push:
-    branches:
-      - master
+on: [push]
 
 jobs:
   build:
