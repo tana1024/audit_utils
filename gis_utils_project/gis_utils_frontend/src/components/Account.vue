@@ -1,5 +1,8 @@
 <template>
   <div id="account">
+    <div class="container-fluid">
+      <GlobalMessage/>
+    </div>
     <div class="row">
       <div class="col-4 mt-5 pl-5">
         Create Account
@@ -68,6 +71,7 @@ localize('ja', ja)
 export default {
   name: 'Account',
   components: {
+    GlobalMessage,
     ValidationProvider,
     ValidationObserver
   },
@@ -78,9 +82,18 @@ export default {
       cPassword: '',
     }
   },
+  created () {
+    // 初期表示のトランザクションイベントが実装されたら、削除すること
+    this.$store.dispatch('messageData/clearMessages')
+  },
   methods: {
     submit: function() {
-        alert('start')
+        api.post('/api/auth/users/', {
+            'username': this.userName,
+            'password': this.password
+        }).then(response => {
+          this.$store.dispatch('messageData/setInfoMessage', { message: 'userが正常に登録されました。' })
+        })
     }
   }
 }
