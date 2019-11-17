@@ -41,7 +41,7 @@ export default {
     },
     execLogout: function() {
       this.$store.dispatch('authData/logout')
-      this.$router.push({path: 'login'})
+      this.$router.push('/login')
     }
   }
 }

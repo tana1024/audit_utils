@@ -9,14 +9,14 @@
           <label for="username">Username</label>
         </div>
         <div class="mb-3">
-          <b-form-input id="username" v-model="userName" class="w-50"></b-form-input>
+          <b-form-input id="username" v-model="userName" disabled class="w-50"></b-form-input>
         </div>
       </div>
     </div>
     <hr>
     <div class="row">
       <div class="col-4 mt-3 pl-5">
-        Password
+        Update Password
       </div>
       <div class="col-8 mt-3">
         <div class="mb-2">
@@ -56,11 +56,13 @@
   </div>
 </template>
 <script>
+import api from '@/services/api'
+
 export default {
   name: 'Profile',
   data: function() {
     return {
-      userName: 'gisutils'
+      userName: this.$store.state.authData.username
     }
   }
 }
