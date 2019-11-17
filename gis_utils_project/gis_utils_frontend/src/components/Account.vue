@@ -47,7 +47,7 @@
             </validation-provider>
           </div>
           <div class="mb-3">
-            <b-button id="ca-button" variant="primary" :disabled="invalid" @click="showCreateAccountModal">Create Account</b-button>
+            <b-button id="caButton" variant="primary" :disabled="invalid" @click="showCreateAccountModal">Create Account</b-button>
           </div>
         </validation-observer>
       </div>
@@ -85,10 +85,6 @@ export default {
       password: '',
       cPassword: '',
     }
-  },
-  created () {
-    // 初期表示のトランザクションイベントが実装されたら、削除すること
-    this.$store.dispatch('messageData/clearMessages')
   },
   methods: {
     showCreateAccountModal: function() {
