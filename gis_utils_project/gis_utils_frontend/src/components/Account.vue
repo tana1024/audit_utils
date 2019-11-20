@@ -1,6 +1,6 @@
 <template>
   <div id="account">
-    <b-modal id="modal-create-account-confirm" title="確認" @show="this.$refs.vPassword.validate()" @ok="submit">
+    <b-modal id="modal-create-account-confirm" title="確認" @show="reValidate()" @ok="submit">
       <!-- @showは、確認ダイアログが表示される際に、パスワードのvalidateがエラーになってしまうため、ダイアログを表示する際に再度validateを実行する。 -->
       <p>アカウントを登録してもよろしいでしょうか？</p>
     </b-modal>
@@ -89,6 +89,9 @@ export default {
   methods: {
     showCreateAccountModal: function() {
       this.$bvModal.show('modal-create-account-confirm')
+    },
+    reValidate: function() {
+      this.$refs.vPassword.validate()
     },
     submit: function() {
         api.post('/api/auth/users/', {

@@ -3,6 +3,12 @@
     <b-modal id="modal-update-password-confirm" title="確認" @ok="submitUpdatePassword">
       <p>パスワードを更新してもよろしいでしょうか？</p>
     </b-modal>
+    <b-modal id="modal-close-account-confirm" ref="modalCloseAccountConfirm" title="パスワード確認" @show="clearPassword" @hidden="clearPassword" @ok="submitCloseAccount">
+      <b-form ref="clearPasswordForm" @submit.stop.prevent>
+        <p>パスワード</p>
+        <b-form-input id="closePassword" type="password" v-model="closePassword" required></b-form-input>
+      </b-form>
+    </b-modal>
     <div class="container-fluid">
       <GlobalMessage/>
     </div>
@@ -71,7 +77,7 @@
         </div>
         <div class="col-8 mb-5 mt-3">
           <div>
-            <b-button id="ca-button" variant="danger">Close this Account</b-button>
+            <b-button id="ca-button" variant="danger" @click="showCloseAccountModal">Close this Account</b-button>
           </div>
         </div>
       </div>
@@ -108,21 +114,45 @@ export default {
       userName: this.$store.state.authData.username,
       cPassword: '',
       nPassword: '',
-      cnPassword: ''
+      cnPassword: '',
+      closePassword: ''
     }
   },
   methods: {
     showUpdatePasswordModal: function() {
       this.$bvModal.show('modal-update-password-confirm')
     },
+    showCloseAccountModal: function() {
+      this.$bvModal.show('modal-close-account-confirm')
+    },
+    clearPassword: function() {
+      this.closePassword = ''
+    },
     submitUpdatePassword: function() {
-        api.post('/api/auth/users/set_password/', {
-            'new_password': this.nPassword,
-            're_new_password': this.cnPassword,
-            'current_password': this.cPassword
-        }).then(response => {
-          this.$store.dispatch('messageData/setInfoMessage', { message: 'パスワードが正常に更新されました。' })
-        })
+      api.post('/api/auth/users/set_password/', {
+          'new_password': this.nPassword,
+          're_new_password': this.cnPassword,
+          'current_password': this.cPassword
+      }).then(response => {
+        this.$store.dispatch('messageData/setInfoMessage', { message: 'パスワードが正常に更新されました。' })
+      })
+    },
+    submitCloseAccount: function(bvModalEvt) {
+      bvModalEvt.preventDefault()
+      if (!this.$refs.clearPasswordForm.checkValidity()) {
+        this.$refs.clearPasswordForm.classList.add('was-validated')
+        return
+      }
+      api.delete('/api/auth/users/me/', {
+        data: {'current_password': this.closePassword}
+      }).then(response => {
+        this.$refs.modalCloseAccountConfirm.hide()
+      }).then(response => {
+        this.$store.dispatch('authData/logout')
+        this.$router.push('/login')
+      }).catch( error  => {
+        this.$refs.modalCloseAccountConfirm.hide()
+      })
     }
   }
 }
