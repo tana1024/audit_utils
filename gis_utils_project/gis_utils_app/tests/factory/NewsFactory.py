@@ -5,7 +5,25 @@ from ...models import News
 
 class NewsFactory(DjangoModelFactory):
     
-    class Meta : 
+    class Meta:
+        model = News
+
+    source_id = "source_id_0001"
+    source_name = "hogehoge_news"
+    author = "dogcat"
+    title = "comming alien"
+    title_jp = "エイリアンが来た"
+    description = "comming alien"
+    description_jp = "エイリアンが来た"
+    url = "https://hogehoge.hoge.hoge"
+    url_to_image = "https://foo.foo.foo"
+    published_at = datetime.datetime(2019, 1, 15, 16, 17, 30, tzinfo=datetime.timezone.utc)
+    content = "content 2 content"
+
+
+class NewsAllFuzzyFactory(DjangoModelFactory):
+    
+    class Meta: 
         model = News
 
     source_id = FuzzyText(length=50)

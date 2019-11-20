@@ -110,6 +110,8 @@ router.beforeEach((to, from, next) => {
   console.log('to.path=', to.path)
   console.log('isLoggedIn=', isLoggedIn)
 
+  store.dispatch('messageData/clearMessages')
+
   // ログインが必要な画面に遷移しようとした場合
   if (to.matched.some(record => record.meta.requiresAuth)) {
 

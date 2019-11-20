@@ -1,5 +1,12 @@
 <template>
   <div id="account">
+    <b-modal id="modal-create-account-confirm" title="確認" @show="reValidate()" @ok="submit">
+      <!-- @showは、確認ダイアログが表示される際に、パスワードのvalidateがエラーになってしまうため、ダイアログを表示する際に再度validateを実行する。 -->
+      <p>アカウントを登録してもよろしいでしょうか？</p>
+    </b-modal>
+    <div class="container-fluid">
+      <GlobalMessage/>
+    </div>
     <div class="row">
       <div class="col-4 mt-5 pl-5">
         Create Account
@@ -21,7 +28,7 @@
             <label for="password">Password</label>
           </div>
           <div class="mb-3">
-            <validation-provider v-slot="{ errors }" rules="required|alpha_dash|min:8|max:50|password:ConfirmPassword" name="Password">
+            <validation-provider v-slot="{ errors }" rules="required|alpha_dash|min:8|max:50|password:ConfirmPassword" name="Password" ref="vPassword">
               <b-form-input type="password" id="password" v-model="password" placeholder="enter a password" class="w-50" v-b-tooltip.hover title="Password must be 8 or more characters."></b-form-input>
               <p v-show="errors.length" class="alert alert-danger w-50">
                 {{ errors[0] }}
@@ -29,18 +36,18 @@
             </validation-provider>
           </div>
           <div class="mb-2">
-            <label for="c-password">Confirm Password</label>
+            <label for="cPassword">Confirm Password</label>
           </div>
           <div class="mb-4">
             <validation-provider v-slot="{ errors }" rules="required|alpha_dash|min:8|max:50" name="ConfirmPassword">
-              <b-form-input type="password" id="c-password" v-model="cPassword" placeholder="enter the password again" class="w-50"></b-form-input>
+              <b-form-input type="password" id="cPassword" v-model="cPassword" placeholder="enter the password again" class="w-50"></b-form-input>
               <p v-show="errors.length" class="alert alert-danger w-50">
                 {{ errors[0] }}
               </p>
             </validation-provider>
           </div>
           <div class="mb-3">
-            <b-button id="ca-button" variant="primary" :disabled="invalid" @click="submit">Create Account</b-button>
+            <b-button id="caButton" variant="primary" :disabled="invalid" @click="showCreateAccountModal">Create Account</b-button>
           </div>
         </validation-observer>
       </div>
@@ -68,6 +75,7 @@ localize('ja', ja)
 export default {
   name: 'Account',
   components: {
+    GlobalMessage,
     ValidationProvider,
     ValidationObserver
   },
@@ -79,8 +87,19 @@ export default {
     }
   },
   methods: {
+    showCreateAccountModal: function() {
+      this.$bvModal.show('modal-create-account-confirm')
+    },
+    reValidate: function() {
+      this.$refs.vPassword.validate()
+    },
     submit: function() {
-        alert('start')
+        api.post('/api/auth/users/', {
+            'username': this.userName,
+            'password': this.password
+        }).then(response => {
+          this.$store.dispatch('messageData/setInfoMessage', { message: 'userが正常に登録されました。' })
+        })
     }
   }
 }
