@@ -52,6 +52,15 @@ class Client(models.Model):
     class Meta:
         ordering = ('s_code',)
 
+class NewsAdmin(models.Model):
+    # トピックID
+    topic_id = models.CharField(max_length=50, primary_key=True)
+    # 検索キーワード
+    serch_keyword = models.CharField(max_length=500, blank=True)
+    
+    class Meta:
+        ordering = ('topic_id',)
+
 class News(models.Model):
     # ニュースID
     news_id = models.AutoField(primary_key=True)
@@ -77,9 +86,11 @@ class News(models.Model):
     published_at = models.DateTimeField(null=True)
     # コンテンツ
     content = models.CharField(max_length=1000, blank=True)
+    # トピックID
+    topic_id = models.CharField(max_length=50, blank=True)
 
     class Meta:
-        ordering = ('-published_at',)
+        ordering = ('topic_id', '-published_at')
 
 class NewsUpdateStatus(models.Model):
 

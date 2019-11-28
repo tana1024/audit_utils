@@ -9,6 +9,7 @@ This application analyses client information of audit corporation
 - List audit News
 - Show client address on map
 - Analyse client employee and financial information
+- Add and delete user
 
 # System environment
 ## Production environment
