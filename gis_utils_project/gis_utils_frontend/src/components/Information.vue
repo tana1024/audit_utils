@@ -1,6 +1,14 @@
 <template>
   <div id="information">
-    <h3>Information(News API 連携情報)</h3>
+    <div class="d-flex mb-n4">
+      <h3 class="col-6 ml-n3">Information(News API 連携情報)</h3>
+      <div class="col-3 pr-2 mt-2">
+        <p class="text-right"><label for="selected">Topic select : </label></p>
+      </div>
+      <div class="col-3 mt-1">
+        <b-form-select id="selected" v-model="selected" :options="options" size="sm" @change="publish_information"></b-form-select>
+      </div>
+    </div>
     <hr>
     <div id="info-area" class="container">
       <!-- Example row of columns -->
@@ -28,21 +36,31 @@ export default {
       length: 0,
       i: 0,
       j: 0,
-      news: []
+      news: [],
+      selected: 'PwC',
+      options: [
+        {value: 'ErnstYoung', text: 'EY'},
+        {value: 'KPMG', text: 'KPMG'},
+        {value: 'Deloitte', text: 'Deloitte'},
+        {value: 'PwC', text: 'PwC'}
+      ],
     }
   },
   created () {
-    api.get('/api/information/init_information')
-      .then(response=>{
-        console.log('status:', response.status)
-        console.log('responseData:', response.data)
-        this.news = response.data.slice(0,9)
-        this.length = this.news.length
-        this.i = Math.ceil(this.news.length / 3)
-        this.j = this.news.length != 0 && this.news.length % 3 == 0? 3: this.news.length % 3
-      })
+    this.publish_information()
   },
   methods: {
+    publish_information: function () {
+      api.get('/api/information/init_information',{ params: { selected: this.selected } } )
+        .then(response=>{
+          console.log('status:', response.status)
+          console.log('responseData:', response.data)
+          this.news = response.data.slice(0,9)
+          this.length = this.news.length
+          this.i = Math.ceil(this.news.length / 3)
+          this.j = this.news.length != 0 && this.news.length % 3 == 0? 3: this.news.length % 3
+        })
+    }
   }
 }
 </script>

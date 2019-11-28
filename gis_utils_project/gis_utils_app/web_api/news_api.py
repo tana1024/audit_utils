@@ -42,54 +42,65 @@ class DelegateNewsApi:
         model.update_datetime = dt.now(timezone('UTC'))
 
         # MIMEの作成
-        subject = "ニュース更新の完了通知"
-        self.message = self.message % (self.count)
-        msg = MIMEText(self.message, 'plain')
-        msg["Subject"] = subject
-        msg["To"] = self.to_mail_address
-        msg["From"] = self.from_mail_address
+#        subject = "ニュース更新の完了通知"
+#        self.message = self.message % (self.count)
+#        msg = MIMEText(self.message, 'plain')
+#        msg["Subject"] = subject
+#        msg["To"] = self.to_mail_address
+#        msg["From"] = self.from_mail_address
 
-        server = smtplib.SMTP(self.mail_server, 587)
-        server.starttls()
-        server.login(self.from_mail_address, self.from_mail_password)
-        server.send_message(msg)
-        server.quit()
+#        server = smtplib.SMTP(self.mail_server, 465)
+#        server.starttls()
+#        server.login(self.from_mail_address, self.from_mail_password)
+#        server.send_message(msg)
+#        server.quit()
 
         print('ニュース更新の通知処理終了')
 
     def get_news(self):
         print('ニュース取得開始')
         now = dt.now()
-        news =  self.newsapi.get_everything(q='audit', from_param=(now - rdelta(months=1)).strftime('%Y-%m-%d'), to=now.strftime('%Y-%m-%d'))
-        print(news)
+        table = self.base.classes.gis_utils_app_newsadmin
+        news_admins = self.session.query(table)
+        
+        for news_admin in news_admins:
+            print(news_admin.serch_keyword)
+            news =  self.newsapi.get_everything(q=news_admin.serch_keyword.replace(' ', ' AND '), from_param=(now - rdelta(months=1)).strftime('%Y-%m-%d'), to=now.strftime('%Y-%m-%d'))
+            print(news)
 
-        if (news['totalResults'] == 0):
-            print('取得したニュースはありません。')
-            return
+            if (news['totalResults'] == 0):
+                print('取得したニュースはありません。')
+                continue
 
-        self.limit = int(news['totalResults']) if self.limit > int(news['totalResults']) else self.limit
-        models = []
-        for i in range(self.limit):
-            article = news['articles'][i]
-            table = self.base.classes.gis_utils_app_news
-            model = table(
-                source_id = article['source']['id'] or "",
-                source_name = article['source']['name'] or "",
-                author = article['author'] or "",
-                title = article['title'] or "",
-                title_jp = self.translator.translate(article['title'], dest='ja').text or "",
-                description = article['description'] or "",
-                description_jp = self.translator.translate(article['description'], dest='ja').text or "",
-                url = article['url'] or "",
-                url_to_image = article['urlToImage'] or "",
-                published_at = dt.fromisoformat(article['publishedAt'].replace('Z', '+00:00')) if article['publishedAt'] != None else article['publishedAt'],
-                content = article['content'] or ""
-            )
-            models.append(model)
-            self.count = self.count + 1
+            self.limit = int(news['totalResults']) if self.limit > int(news['totalResults']) else self.limit   
+            models = []
+            for i in range(self.limit):
+                print('count : %d' % i)
+                article = news['articles'][i]
+                table = self.base.classes.gis_utils_app_news
+                model = table(
+                    source_id = article['source']['id'] or "",
+                    source_name = article['source']['name'] or "",
+                    author = article['author'] or "",
+                    title = article['title'] or "",
+                    # google翻訳の上限に注意
+                    title_jp = self.translator.translate(article['title'], dest='ja').text or "",
+#                    title_jp = 'google 翻訳機能停止中',
+                    description = article['description'] or "",
+                    # google翻訳の上限に注意
+                    description_jp = self.translator.translate(article['description'], dest='ja').text or "",
+#                    description_jp = 'google 翻訳機能停止中',
+                    url = article['url'] or "",
+                    url_to_image = article['urlToImage'] or "",
+                    published_at = dt.fromisoformat(article['publishedAt'].replace('Z', '+00:00')) if article['publishedAt'] != None else article['publishedAt'],
+                    content = article['content'] or "",
+                    topic_id = news_admin.topic_id
+                )
+                models.append(model)
+                self.count = self.count + 1
 
-        self.session.add_all(models)
-        print('ニュース取得終了')
+            self.session.add_all(models)
+            print('ニュース取得終了')
 
     def commit(self):
         self.session.commit()

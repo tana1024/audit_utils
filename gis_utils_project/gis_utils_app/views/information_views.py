@@ -6,3 +6,8 @@ from ..serializers import NewsSerializer
 class InitInformationView(ListAPIView):
     queryset = News.objects.all()
     serializer_class = NewsSerializer
+
+    def get_queryset(self):
+        queryset = News.objects.all()
+        queryset = queryset.filter(topic_id=self.request.query_params['selected'])
+        return queryset
