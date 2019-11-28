@@ -2,7 +2,7 @@ from django.urls import path
 from django.conf.urls import url
 
 from .views import views
-from .views.information_views import InitInformationView
+from .views.information_views import PublishInformationView
 from .views.scraping_views import InitScrapingView, ExecScrapingView, InitWebApiView, ExecWebApiView
 from .views.mapping_views import GetClientGioInfoView
 from .views.chart_bar_views import GetClientEmployeesChartDataView, GetClientIncomeChartDataView, GetClientSalesChartDataView
@@ -12,7 +12,7 @@ from .views.views import SpotListApiView, SpotRetrieveApiView
 app_name = 'gis_utils_app'
 urlpatterns = [
     path('hello', views.index, name='index'),
-    path('information/init_information', InitInformationView.as_view(), name="init_information_view"),
+    path('information/publish_information', PublishInformationView.as_view(), name="publish_information_view"),
     path('scraping/init_scraping', InitScrapingView.as_view(), name="initScrapingView"),
     path('scraping/init_webapi', InitWebApiView.as_view(), name="initWebApiView"),
     path('scraping/exec_scraping', ExecScrapingView.as_view(), name="execScrapingView"),

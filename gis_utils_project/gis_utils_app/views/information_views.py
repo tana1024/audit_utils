@@ -3,7 +3,7 @@ from ..models import News
 from ..serializers import NewsSerializer
 
 # pylint: disable=E1101
-class InitInformationView(ListAPIView):
+class PublishInformationView(ListAPIView):
     queryset = News.objects.all()
     serializer_class = NewsSerializer
 

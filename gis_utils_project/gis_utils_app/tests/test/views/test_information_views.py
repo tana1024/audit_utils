@@ -17,9 +17,9 @@ class InitInformationViewTest(TestCase):
         factory = NewsFactory
         factory.create_batch(size=1)
 
-        url = reverse('init_information_view', urlconf='gis_utils_app.urls')
+        url = reverse('publish_information_view', urlconf='gis_utils_app.urls')
         print(url)
-        response = self.client.get(self.URL_ROOT + url)
+        response = self.client.get(self.URL_ROOT + url, {'selected': 'PwC'})
         print(response.data)
         self.assertEquals(response.status_code, 200)        
         self.assertEquals(response.data[0]['source_name'], 'hogehoge_news')
@@ -37,9 +37,9 @@ class InitInformationViewTest(TestCase):
         factory = NewsAllFuzzyFactory
         factory.create_batch(size=10)
 
-        url = reverse('init_information_view', urlconf='gis_utils_app.urls')
+        url = reverse('publish_information_view', urlconf='gis_utils_app.urls')
         print(url)
-        response = self.client.get(self.URL_ROOT + url)
+        response = self.client.get(self.URL_ROOT + url, {'selected': 'PwC'})
         print(response.data)
         self.assertEquals(response.status_code, 200)
         self.assertEquals(len(response.data), 10)
