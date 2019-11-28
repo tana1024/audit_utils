@@ -51,7 +51,7 @@ export default {
   },
   methods: {
     publish_information: function () {
-      api.get('/api/information/init_information',{ params: { selected: this.selected } } )
+      api.get('/api/information/publish_information',{ params: { selected: this.selected } } )
         .then(response=>{
           console.log('status:', response.status)
           console.log('responseData:', response.data)
