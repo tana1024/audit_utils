@@ -69,7 +69,7 @@ class News(models.Model):
     # ソース元名称
     source_name = models.CharField(max_length=300, blank=True)
     # 著者
-    author = models.CharField(max_length=100, blank=True)
+    author = models.CharField(max_length=200, blank=True)
     # タイトル
     title = models.CharField(max_length=500, blank=True)
     # タイトル(日本語訳)
